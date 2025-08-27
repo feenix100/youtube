@@ -1,2 +1,2 @@
-# youtube
-code from youtube video content
+# Code from youtube
+This is a collection of code that I created or used in my youtube content.

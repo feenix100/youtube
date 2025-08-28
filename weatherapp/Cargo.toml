@@ -1,0 +1,26 @@
+[package]
+name = "weatherapp"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+# GUI
+eframe = { version = "0.32", default-features = true }
+egui_extras = { version = "0.32", features = ["chrono"] }
+
+
+# Time & JSON
+chrono = { version = "0.4", features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+
+# HTTP (simple, blocking, thread-friendly)
+ureq = { version = "2.9", features = ["json"] }
+
+
+# Paths & errors
+directories = "5.0"
+anyhow = "1.0"
+urlencoding = "2.1.3"

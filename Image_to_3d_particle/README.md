@@ -1,6 +1,9 @@
-# REST Express Application with 3D Particle Visualization
+# Image to 3D Particle Visualization
 
 ## Overview
+
+I created a one html file version that essentially does the same thing as the full stack project using vite that I built using replit.com
+
 
 This is a full-stack web application built with React and Express that features an interactive 3D particle visualization system. The application allows users to upload images and convert them into animated particle systems using Three.js and WebGL shaders. The frontend provides real-time controls for visual effects like bloom and brightness, while the backend serves as a REST API foundation with PostgreSQL database integration.
 
@@ -87,4 +90,5 @@ Preferred communication style: Simple, everyday language.
 - **express** - Web framework for Node.js
 - **react** & **react-dom** - Frontend framework
 - **date-fns** - Date utility library
+
 - **clsx** & **tailwind-merge** - CSS class utilities

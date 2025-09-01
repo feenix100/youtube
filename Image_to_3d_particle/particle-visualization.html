@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Particle Image Visualization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .upload-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px dashed #444;
+            color: white;
+            max-width: 300px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-container.has-image {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            max-width: 60px;
+            opacity: 0.4;
+        }
+        
+        .upload-container:hover {
+            opacity: 1 !important;
+            max-width: 300px !important;
+            padding: 20px !important;
+            background: rgba(0, 0, 0, 0.8) !important;
+        }
+        
+        .upload-area {
+            padding: 20px;
+            border: 2px dashed #666;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .upload-area.loading {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        .camera-icon {
+            font-size: 12px;
+            margin: 0;
+            text-align: center;
+        }
+        
+        .upload-text {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+        
+        .upload-subtext {
+            margin: 0;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .upload-title {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+        }
+        
+        .hover-content {
+            display: none;
+        }
+        
+        .upload-container:hover .hover-content {
+            display: block;
+        }
+        
+        .upload-container:hover .camera-icon {
+            display: none;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container">
+        <div id="upload-ui" class="upload-container">
+            <h3 class="upload-title">Upload Image</h3>
+            <div class="upload-area" id="upload-area">
+                <p class="upload-text">Click to select or drag & drop an image</p>
+                <p class="upload-subtext">Supports JPG, PNG, WebP</p>
+            </div>
+            <input type="file" id="file-input" accept="image/*" style="display: none;">
+        </div>
+    </div>
+
+    <!-- Only Three.js from CDN -->
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    
+    <script>
+        // Global variables
+        let scene, camera, renderer, particleSystem;
+        let isMouseDown = false;
+        let mouseX = 0, mouseY = 0;
+        let targetRotationX = 0, targetRotationY = 0;
+        let currentRotationX = 0, currentRotationY = 0;
+        let currentImage = null;
+        let isLoading = false;
+
+        // DOM elements
+        const canvasContainer = document.getElementById('canvas-container');
+        const uploadUI = document.getElementById('upload-ui');
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+
+        // Initialize Three.js scene
+        function initScene() {
+            // Scene setup
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            canvasContainer.appendChild(renderer.domElement);
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+            
+            camera.position.z = 8;
+            
+            // Mouse controls
+            setupControls();
+            
+            // Start animation loop
+            animate();
+        }
+
+        // Setup mouse controls
+        function setupControls() {
+            renderer.domElement.addEventListener('mousedown', (event) => {
+                isMouseDown = true;
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+            
+            window.addEventListener('mousemove', (event) => {
+                if (!isMouseDown) return;
+                
+                const deltaX = event.clientX - mouseX;
+                const deltaY = event.clientY - mouseY;
+                
+                targetRotationY += deltaX * 0.01;
+                targetRotationX += deltaY * 0.01;
+                
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+            
+            window.addEventListener('mouseup', () => {
+                isMouseDown = false;
+            });
+            
+            renderer.domElement.addEventListener('wheel', (event) => {
+                camera.position.z += event.deltaY * 0.01;
+                camera.position.z = Math.max(-2, Math.min(15, camera.position.z)); // Allow going to center and beyond
+            });
+            
+            // Prevent context menu
+            renderer.domElement.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+            });
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Smooth rotation
+            currentRotationX += (targetRotationX - currentRotationX) * 0.1;
+            currentRotationY += (targetRotationY - currentRotationY) * 0.1;
+            
+            if (particleSystem) {
+                particleSystem.rotation.x = currentRotationX;
+                particleSystem.rotation.y = currentRotationY;
+                
+                // Auto rotation
+                particleSystem.rotation.y += 0.002;
+                targetRotationY += 0.002;
+            }
+            
+            renderer.render(scene, camera);
+        }
+
+        // Process image to particles
+        function processImageToParticles(imageElement) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Much higher resolution for detailed image recognition
+            const maxSize = 400;
+            const scale = Math.min(maxSize / imageElement.width, maxSize / imageElement.height);
+            const width = Math.floor(imageElement.width * scale);
+            const height = Math.floor(imageElement.height * scale);
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            ctx.drawImage(imageElement, 0, 0, width, height);
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+            
+            const sphereData = [];
+            
+            // Sample every pixel for maximum detail
+            for (let y = 0; y < height; y += 1) {
+                for (let x = 0; x < width; x += 1) {
+                    const index = (y * width + x) * 4;
+                    const r = data[index] / 255;
+                    const g = data[index + 1] / 255;
+                    const b = data[index + 2] / 255;
+                    const a = data[index + 3] / 255;
+                    
+                    // Show particles for any visible pixel
+                    if (a > 0.05) {
+                        // Map 2D coordinates to spherical coordinates
+                        const theta = (x / width) * Math.PI * 2; // longitude: 0 to 2π
+                        const phi = (y / height) * Math.PI; // latitude: 0 to π
+                        const radius = 2.5; // smaller sphere radius for tighter packing
+                        
+                        // Convert spherical to cartesian coordinates
+                        const posX = radius * Math.sin(phi) * Math.cos(theta);
+                        const posY = radius * Math.cos(phi);
+                        const posZ = radius * Math.sin(phi) * Math.sin(theta);
+                        
+                        sphereData.push({
+                            position: { x: posX, y: posY, z: posZ },
+                            color: { r, g, b }
+                        });
+                    }
+                }
+            }
+            
+            return sphereData;
+        }
+
+        // Create particle system from image
+        function createParticleSystem(imageElement) {
+            // Remove existing particle system
+            if (particleSystem) {
+                scene.remove(particleSystem);
+                // Dispose of all child geometries and materials
+                particleSystem.traverse((child) => {
+                    if (child.geometry) child.geometry.dispose();
+                    if (child.material) child.material.dispose();
+                });
+            }
+            
+            const sphereData = processImageToParticles(imageElement);
+            
+            if (sphereData.length === 0) return;
+            
+            // Create a group to hold all sphere particles
+            particleSystem = new THREE.Group();
+            
+            // Create sphere geometry (reuse for performance)
+            const sphereGeometry = new THREE.SphereGeometry(0.008, 8, 6); // Very small spheres, low poly for performance
+            
+            // Create spheres with individual colors
+            sphereData.forEach((sphere, index) => {
+                // Skip some spheres if too many for performance (keep every 2nd for very dense images)
+                if (sphereData.length > 20000 && index % 2 !== 0) return;
+                
+                const material = new THREE.MeshBasicMaterial({
+                    color: new THREE.Color(sphere.color.r, sphere.color.g, sphere.color.b),
+                    transparent: true,
+                    opacity: 0.95
+                });
+                
+                const sphereMesh = new THREE.Mesh(sphereGeometry, material);
+                sphereMesh.position.set(sphere.position.x, sphere.position.y, sphere.position.z);
+                
+                particleSystem.add(sphereMesh);
+            });
+            
+            scene.add(particleSystem);
+        }
+
+        // Handle file upload
+        function handleFileUpload(file) {
+            if (!file || !file.type.startsWith('image/')) return;
+            
+            setLoading(true);
+            
+            const img = new Image();
+            img.onload = () => {
+                currentImage = img;
+                createParticleSystem(img);
+                setLoading(false);
+                updateUploadUI();
+            };
+            img.onerror = () => {
+                setLoading(false);
+                alert('Error loading image. Please try another file.');
+            };
+            img.src = URL.createObjectURL(file);
+        }
+
+        // Update loading state
+        function setLoading(loading) {
+            isLoading = loading;
+            if (loading) {
+                uploadArea.innerHTML = `
+                    <div class="spinner"></div>
+                    <p class="upload-text">Processing image...</p>
+                `;
+                uploadArea.classList.add('loading');
+            } else {
+                updateUploadContent();
+                uploadArea.classList.remove('loading');
+            }
+        }
+
+        // Update upload UI based on state
+        function updateUploadUI() {
+            if (currentImage) {
+                uploadUI.classList.add('has-image');
+                uploadUI.innerHTML = `
+                    <div class="camera-icon">📷</div>
+                    <div class="hover-content">
+                        <h3 class="upload-title">Upload New Image</h3>
+                        <div class="upload-area" id="upload-area">
+                            <p class="upload-text">Click to select or drag & drop a new image</p>
+                            <p class="upload-subtext">Supports JPG, PNG, WebP</p>
+                        </div>
+                    </div>
+                    <input type="file" id="file-input" accept="image/*" style="display: none;">
+                `;
+                setupUploadHandlers();
+            } else {
+                uploadUI.classList.remove('has-image');
+                updateUploadContent();
+            }
+        }
+
+        // Update upload content
+        function updateUploadContent() {
+            if (!isLoading) {
+                uploadArea.innerHTML = `
+                    <p class="upload-text">Click to select or drag & drop an image</p>
+                    <p class="upload-subtext">Supports JPG, PNG, WebP</p>
+                `;
+            }
+        }
+
+        // Setup upload event handlers
+        function setupUploadHandlers() {
+            const newUploadArea = document.getElementById('upload-area');
+            const newFileInput = document.getElementById('file-input');
+            
+            // Click to upload
+            uploadUI.addEventListener('click', () => {
+                if (!isLoading && newFileInput) {
+                    newFileInput.click();
+                }
+            });
+            
+            // File input change
+            if (newFileInput) {
+                newFileInput.addEventListener('change', (event) => {
+                    const file = event.target.files[0];
+                    if (file) handleFileUpload(file);
+                });
+            }
+            
+            // Drag and drop
+            if (newUploadArea) {
+                newUploadArea.addEventListener('dragover', (event) => {
+                    event.preventDefault();
+                });
+                
+                newUploadArea.addEventListener('drop', (event) => {
+                    event.preventDefault();
+                    const file = event.dataTransfer.files[0];
+                    if (file) handleFileUpload(file);
+                });
+            }
+        }
+
+        // Handle window resize
+        function handleResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Initialize everything
+        function init() {
+            initScene();
+            setupUploadHandlers();
+            window.addEventListener('resize', handleResize);
+            
+            // Click to upload
+            uploadUI.addEventListener('click', () => {
+                if (!isLoading) {
+                    fileInput.click();
+                }
+            });
+            
+            // File input change
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) handleFileUpload(file);
+            });
+            
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (event) => {
+                event.preventDefault();
+            });
+            
+            uploadArea.addEventListener('drop', (event) => {
+                event.preventDefault();
+                const file = event.dataTransfer.files[0];
+                if (file) handleFileUpload(file);
+            });
+        }
+
+        // Start the application
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

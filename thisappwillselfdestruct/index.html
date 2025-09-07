@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Self-Destruct To-Do (Voice + FX)</title>
+<style>
+  :root { --bg:#0e1117; --fg:#e6edf3; --muted:#9fb0c0; --card:#161b22; --ok:#2ea043; --warn:#f2cc60; --bad:#f85149; --accent:#58a6ff; }
+  * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
+  body { margin: 0; background: var(--bg); color: var(--fg); display: grid; place-items: start center; padding: 24px; }
+  .app { width: min(760px, 92vw); position: relative; }
+
+  h1 { margin: 0 0 12px; font-size: 1.5rem; }
+  .row { display: flex; gap: 8px; }
+  input[type="text"] { flex: 1; padding: 12px 14px; border-radius: 10px; border: 1px solid #263244; background: var(--card); color: var(--fg); }
+  .time { width: 120px; padding: 12px 10px; border-radius: 10px; border: 1px solid #263244; background: var(--card); color: var(--fg); }
+  button { padding: 12px 14px; border: 0; border-radius: 10px; background: var(--accent); color: #081018; font-weight: 600; cursor: pointer; }
+
+  ul { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 12px; }
+  li.note {
+    position: relative; background: var(--card); border: 2px solid #263244; border-radius: 14px;
+    padding: 14px 12px 12px; display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: start; overflow: hidden;
+  }
+  .txt { white-space: pre-wrap; word-break: break-word; line-height: 1.35; }
+  .meta { display: flex; gap: 6px; align-items: center; }
+
+  /* Countdown badge */
+  .badge { font-variant-numeric: tabular-nums; padding: 6px 10px; border-radius: 999px; border: 1px solid #2a3648; background: #1b2230; color: var(--muted); }
+  .badge.warn { background: #2a240f; color: var(--warn); border-color: #3b300a; }
+  .badge.bad  { background: #2a0f0f; color: var(--bad);  border-color: #3b0a0a; }
+
+  .actions { display: flex; gap: 6px; }
+  .ghost { background: transparent; color: var(--muted); border: 1px solid #2a3547; border-radius: 10px; padding: 8px 10px; }
+  .ok { background: var(--ok); color: #081008; border-radius: 10px; padding: 8px 10px; }
+  .small { font-size: .9rem; }
+  .hint { margin-top: 10px; color: var(--muted); font-size: .9rem; }
+
+  /* Fuse bar */
+  .fuse { position: absolute; left: 0; top: 0; height: 6px; width: 100%; transform-origin: left center; }
+  .fuse.track { background: #0f1623; border-bottom: 1px solid #263244; }
+  .fuse.fill { background: linear-gradient(90deg, #2ea043 0%, #f2cc60 55%, #f85149 100%); mix-blend-mode: screen; }
+
+  /* Ribbon + overlay */
+  .ribbon {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: repeating-linear-gradient(-35deg, rgba(248,81,73,0.12) 0px, rgba(248,81,73,0.12) 18px, transparent 18px, transparent 36px);
+    opacity: 0; transition: opacity .25s ease;
+  }
+  .note.warn  .ribbon { opacity: .5; }
+  .note.bad   .ribbon { opacity: .85; animation: ribbonFlash .6s steps(2) infinite; }
+  @keyframes ribbonFlash { 50% { opacity: .35; } }
+
+  .overlay {
+    position: absolute; left: 0; right: 0; top: 30%; text-align: center; pointer-events: none;
+    font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+    text-shadow: 0 2px 10px rgba(0,0,0,.4);
+    opacity: 0; transform: scale(.95);
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .note.warn  .overlay { opacity: .7; transform: scale(1); }
+  .note.bad   .overlay { opacity: 1; transform: scale(1.04); }
+  .overlay .tag { display: inline-block; padding: 8px 12px; border-radius: 10px; border: 2px solid rgba(248,81,73,.5); background: rgba(248,81,73,.15); color: #ffdcdc; }
+  .overlay .timebig { display:block; font-size: 1.65rem; margin-top: 6px; color:#fff; }
+
+  /* Panic */
+  .panic { animation: shake .35s linear infinite; }
+  @keyframes shake { 0%,100%{transform: translateX(0)} 25%{transform: translateX(-1px)} 75%{transform: translateX(1px)} }
+  .note.bad { border-color: #f85149; box-shadow: 0 0 0 3px rgba(248,81,73,.25) inset; }
+
+  /* Toast */
+  .toast {
+    position: fixed; left: 50%; top: 20px; transform: translateX(-50%) translateY(-16px);
+    background: #1b2230; color: var(--fg); border: 1px solid #2a3547; padding: 10px 14px; border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.35); opacity: 0; pointer-events: none; transition: transform .25s ease, opacity .25s ease;
+    font-size: .95rem; z-index: 9999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Confetti + smoke (global) */
+  .confetti {
+    position: fixed; width: 7px; height: 12px; border-radius: 2px; pointer-events: none; z-index: 9998; opacity: .98;
+    animation: fly var(--dur,900ms) cubic-bezier(.2,.7,.2,1) forwards, spin var(--dur,900ms) linear forwards;
+  }
+  @keyframes fly { to { transform: translate(var(--dx,0px), var(--dy,-120px)); opacity: 0; } }
+  @keyframes spin { to { rotate: 540deg; } }
+
+  .smoke {
+    position: fixed; width: 18px; height: 18px; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(220,220,220,.45), rgba(220,220,220,.05) 70%, transparent 72%);
+    filter: blur(1px); pointer-events: none; z-index: 9997;
+    animation: puff 900ms ease-out forwards;
+  }
+  @keyframes puff { to { transform: translateY(-30px) scale(3.2); opacity: 0; filter: blur(3px); } }
+</style>
+</head>
+
+
+<body>
+  <div class="app">
+    <h1>🧨 Self-Destruct To-Do List</h1>
+
+    
+    <div class="row">
+      <input id="taskText" type="text" placeholder="what needs doing… (enter to add)" />
+      <input id="taskTTL" class="time" type="text" placeholder="2m | 30s" />
+      <button id="addBtn">Add</button>
+    </div>
+    
+    <div class="hint">Tip: durations accept <b>m</b> or <b>s</b> (e.g., <code>2m</code>, <code>45s</code>). Default is <b>2m</b>. Audio may require a click first.</div>
+    <ul id="list"></ul>
+  </div>
+
+  <div id="toast" class="toast">🧨 This note will self-destruct.</div>
+
+<script>
+(() => {
+  const $ = sel => document.querySelector(sel);
+  const listEl = $('#list');
+  const textEl = $('#taskText');
+  const ttlEl  = $('#taskTTL');
+  const addBtn = $('#addBtn');
+  const toastEl = $('#toast');
+  const STORAGE_KEY = 'sd_todo_voice_fx_v1';
+
+  /** @type {{id:string,text:string,deadline:number,created:number,durationMs:number,beeped?:Record<number,boolean>}[]} */
+  let tasks = load();
+
+  /* ===== Storage ===== */
+  function load(){
+    try{ const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); return Array.isArray(data) ? data : []; }
+    catch{ return []; }
+  }
+  function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }
+
+  /* ===== Utils ===== */
+  function showToast(msg='🧨 This note will self-destruct.'){
+    toastEl.textContent = msg; toastEl.classList.add('show');
+    setTimeout(()=> toastEl.classList.remove('show'), 1800);
+  }
+  function parseDuration(input){
+    if(!input) return 2*60*1000;
+    const s = String(input).trim().toLowerCase();
+    const m = s.match(/^(\d+(?:\.\d+)?)(m|s)?$/);
+    if(!m) return 2*60*1000;
+    const n = parseFloat(m[1]); const unit = m[2] || 'm';
+    return (unit === 's' ? n : n*60) * 1000;
+  }
+  const pad2 = n => String(n).padStart(2,'0');
+  function fmtRemaining(ms){ if(ms<=0) return '00:00'; const t=Math.ceil(ms/1000); return `${pad2(Math.floor(t/60))}:${pad2(t%60)}`; }
+
+  /* ===== Audio (beeps) ===== */
+  let audioCtx;
+  function beep(freq=880, dur=0.12){
+    try{
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type='square'; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.15, audioCtx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(); o.stop(audioCtx.currentTime + dur + 0.02);
+    }catch(e){}
+  }
+
+  /* ===== Voice (SpeechSynthesis) ===== */
+  function speakSelfDestruct(seconds){
+    if(!('speechSynthesis' in window)) return;
+    // Cancel any queued utterances to avoid overlap
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(`This message will self destruct in ${seconds} ${seconds===1?'second':'seconds'}`);
+    // Slightly assertive voice
+    u.rate = 1.05; u.pitch = 0.95; u.volume = 1;
+    // Prefer an English voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const pref = voices.find(v=>/en(-|_)?(US|GB)?/i.test(v.lang)) || voices[0];
+    if(pref) u.voice = pref;
+    try { window.speechSynthesis.speak(u); } catch(_) {}
+  }
+  // Some browsers load voices asynchronously
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = () => {};
+  }
+
+  /* ===== Core ===== */
+  function addTask(text, ttlMs){
+    const now = Date.now();
+    const t = {
+      id: crypto.randomUUID?.() || (now+'-'+Math.random().toString(16).slice(2)),
+      text: text.trim(),
+      created: now,
+      deadline: now + ttlMs,
+      durationMs: ttlMs,
+      beeped: {}
+    };
+    tasks.push(t); persist(); render();
+    showToast('🧨 This note will self-destruct.');
+    // Voice callout in seconds based on input TTL
+    const secs = Math.max(1, Math.round(ttlMs/1000));
+    speakSelfDestruct(secs);
+  }
+
+  function finalRemove(id){
+    tasks = tasks.filter(t=>t.id!==id); persist();
+    const el = document.getElementById('task-'+id); if(el) el.remove();
+  }
+
+  function explodeAndRemove(li, id){
+    if(!li) return finalRemove(id);
+    const rect = li.getBoundingClientRect();
+    li.style.visibility = 'hidden'; // hide card quickly
+
+    // Confetti
+    const colors = ['#f85149','#2ea043','#58a6ff','#f2cc60','#a371f7','#ffa657','#56d364','#79c0ff'];
+    const pieces = 48;
+    for(let i=0;i<pieces;i++){
+      const d = document.createElement('div');
+      d.className = 'confetti';
+      const x = rect.left + rect.width/2, y = rect.top + rect.height/2;
+      d.style.left = `${x}px`; d.style.top = `${y}px`;
+      const angle = Math.random()*2*Math.PI;
+      const speed = 140 + Math.random()*280;
+      const dx = Math.cos(angle)*speed;
+      const dy = Math.sin(angle)*speed - 90;
+      d.style.setProperty('--dx', dx.toFixed(1)+'px');
+      d.style.setProperty('--dy', dy.toFixed(1)+'px');
+      d.style.setProperty('--dur', (700 + Math.random()*800)+'ms');
+      d.style.background = colors[i % colors.length];
+      document.body.appendChild(d);
+      d.addEventListener('animationend', ()=> d.remove(), {once:true});
+    }
+    // Smoke puffs
+    for(let s=0;s<4;s++){
+      const p = document.createElement('div');
+      p.className = 'smoke';
+      p.style.left = (rect.left + rect.width/2 + (Math.random()*40-20)) + 'px';
+      p.style.top = (rect.top + rect.height/2 + (Math.random()*20-10)) + 'px';
+      document.body.appendChild(p);
+      p.addEventListener('animationend', ()=> p.remove(), {once:true});
+    }
+    setTimeout(()=> finalRemove(id), 140);
+  }
+
+  function removeTask(id, animate=true){
+    const el = document.getElementById('task-'+id);
+    if(animate && el) explodeAndRemove(el, id); else finalRemove(id);
+  }
+
+  function snooze(id, ms=60_000){
+    const t = tasks.find(x=>x.id===id); if(!t) return;
+    t.deadline += ms; persist(); renderRow(t);
+  }
+
+  function render(){
+    const now = Date.now();
+    const before = tasks.length;
+    tasks = tasks.filter(t => t.deadline > now);
+    if(tasks.length !== before) persist();
+    tasks.sort((a,b)=>a.deadline - b.deadline);
+    listEl.innerHTML = ''; tasks.forEach(renderRow);
+  }
+
+  function renderRow(t){
+    let li = document.getElementById('task-'+t.id);
+    const now = Date.now();
+    if(t.deadline <= now){ removeTask(t.id, true); return; }
+
+    const remaining = t.deadline - now;
+    const danger = remaining <= 10_000;
+    const warn   = remaining <= 30_000 && !danger;
+
+    const badgeClass = danger ? 'badge bad' : warn ? 'badge warn' : 'badge';
+
+    if(!li){
+      li = document.createElement('li');
+      li.className = 'note';
+      li.id = 'task-'+t.id;
+      li.innerHTML = `
+        <div class="fuse track" aria-hidden="true"></div>
+        <div class="fuse fill"  aria-hidden="true" style="transform: scaleX(1)"></div>
+        <div class="ribbon" aria-hidden="true"></div>
+        <div class="overlay" aria-hidden="true">
+          <span class="tag">SELF-DESTRUCT</span>
+          <span class="timebig" data-timebig>00:00</span>
+        </div>
+
+        <div class="txt"></div>
+        <div class="meta">
+          <span class="${badgeClass}" data-badge>${fmtRemaining(remaining)}</span>
+          <div class="actions">
+            <button class="ghost small" data-snooze>+1m</button>
+            <button class="ok small" data-done>Done</button>
+            <button class="ghost small" data-del>Delete</button>
+          </div>
+        </div>`;
+      listEl.appendChild(li);
+
+      li.querySelector('[data-done]').addEventListener('click', ()=> removeTask(t.id, true));
+      li.querySelector('[data-del]').addEventListener('click', ()=> removeTask(t.id, true));
+      li.querySelector('[data-snooze]').addEventListener('click', ()=> snooze(t.id));
+    }
+
+    // Text + badge
+    li.querySelector('.txt').textContent = t.text;
+    const badge = li.querySelector('[data-badge]');
+    badge.textContent = fmtRemaining(remaining);
+    badge.className = badgeClass;
+
+    // Big overlay time
+    const timebig = li.querySelector('[data-timebig]');
+    if(timebig) timebig.textContent = fmtRemaining(remaining);
+
+    // Fuse progress
+    const fill = li.querySelector('.fuse.fill');
+    const ratio = Math.max(0, Math.min(1, remaining / t.durationMs));
+    if(fill) fill.style.transform = `scaleX(${ratio})`;
+
+    // State classes
+    li.classList.toggle('warn', warn);
+    li.classList.toggle('bad',  danger);
+    li.classList.toggle('panic', remaining <= 3000);
+
+    // Final 3s beeps (once per second)
+    const secondsLeft = Math.ceil(remaining/1000);
+    if(secondsLeft <= 3 && secondsLeft >= 1 && !t.beeped[secondsLeft]){
+      t.beeped[secondsLeft] = true; persist();
+      beep(700 + (3 - secondsLeft) * 180, 0.12);
+    }
+  }
+
+  // ticker
+  setInterval(() => {
+    const now = Date.now();
+    for(const t of [...tasks]){
+      if(t.deadline <= now){
+        removeTask(t.id, true);
+      }else{
+        renderRow(t);
+      }
+    }
+  }, 250);
+
+  // interactions
+  function handleAdd(){
+    const txt = textEl.value.trim(); if(!txt) return;
+    const ttl = parseDuration(ttlEl.value);
+    addTask(txt, ttl);
+    textEl.value = '';
+  }
+  addBtn.addEventListener('click', handleAdd);
+  textEl.addEventListener('keydown', e => { if(e.key === 'Enter') handleAdd(); });
+
+  // init
+  render();
+})();
+</script>
+</body>
+</html>

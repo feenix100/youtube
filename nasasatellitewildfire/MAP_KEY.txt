@@ -1,0 +1,2 @@
+COPY PASTE YOUR MAP KEY FROM HERE
+https://firms.modaps.eosdis.nasa.gov/api/map_key/

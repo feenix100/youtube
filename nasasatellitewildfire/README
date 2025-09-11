@@ -1,0 +1,5 @@
+Download wildfire satellite data from a NASA API using a free API key, then create an Excel file, a PowerPoint presentation, a csv file, and a graph—all with a single Python script. 
+
+Let me know how you would present this data in the comments below!
+
+Big shoutout to NASA for making incredible open data and services available to the public. We’ll focus on wildfire data accessible via NASA tools like FIRMS (near-real-time active fire/hotspot detections) and related open APIs. 

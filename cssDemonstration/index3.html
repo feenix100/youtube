@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CSS Animation Buttons, Links & Backgrounds Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* ===============================
+       THEME VARIABLES
+       =============================== */
+    :root {
+      --bg: #050816;
+      --bg-alt: #0b1020;
+      --accent: #00f5ff;
+      --accent-2: #ff7bff;
+      --accent-3: #ffd56b;
+      --text: #f5f7ff;
+      --muted: #a4b0d3;
+      --radius: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background:
+        radial-gradient(circle at top left, #1b2a4a 0, transparent 50%),
+        radial-gradient(circle at bottom right, #3a103f 0, #02030a 60%);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    .page {
+      max-width: 1000px;
+      width: 100%;
+      background: linear-gradient(135deg, rgba(16, 24, 48, 0.96), rgba(6, 10, 28, 0.96));
+      border-radius: 1.5rem;
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+      padding: 2.5rem 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: clamp(2rem, 3vw, 2.6rem);
+      margin: 0 0 0.5rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #8afcff, #ffd6ff, #fff6a5);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .tagline {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #6fe9ff;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      margin: 0 0 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #9fb4ff;
+    }
+
+    .section-desc {
+      margin: 0 0 1.5rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    /* ===============================
+       DEMO CARDS LAYOUT
+       =============================== */
+
+    .button-list,
+    .link-list,
+    .background-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .link-list,
+    .background-list {
+      margin-top: 1.75rem;
+    }
+
+    .button-card,
+    .link-card,
+    .bg-card {
+      border-radius: 1rem;
+      padding: 1rem 1.2rem;
+      background: radial-gradient(
+        circle at top left,
+        rgba(148, 163, 184, 0.18),
+        rgba(15, 23, 42, 0.9)
+      );
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) auto;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .button-card-header,
+    .link-card-header,
+    .bg-card-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .button-card-title,
+    .link-card-title,
+    .bg-card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
+
+    .button-card-desc,
+    .link-card-desc,
+    .bg-card-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .button-card-classes,
+    .link-card-classes,
+    .bg-card-classes {
+      margin-top: 0.35rem;
+      font-size: 0.75rem;
+      color: #a5f3fc;
+    }
+
+    .button-card-classes code,
+    .link-card-classes code,
+    .bg-card-classes code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 0.2rem 0.4rem;
+      border-radius: 999px;
+      border: 1px solid rgba(45, 212, 191, 0.5);
+    }
+
+    .button-card-demo,
+    .link-card-demo,
+    .bg-card-demo {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 1.75rem 1.2rem;
+      }
+      .button-card,
+      .link-card,
+      .bg-card {
+        grid-template-columns: 1fr;
+        justify-items: flex-start;
+      }
+      .button-card-demo,
+      .link-card-demo,
+      .bg-card-demo {
+        justify-content: flex-start;
+      }
+    }
+
+    /* ===============================
+       BASE BUTTON STYLES
+       Copy this with any variant
+       =============================== */
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.8rem 1.2rem;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text);
+      background: var(--bg-alt);
+      outline: none;
+      transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        border-color 200ms ease,
+        background 200ms ease,
+        color 200ms ease;
+      overflow: hidden;
+    }
+
+    .btn span.label {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn:focus-visible {
+      box-shadow: 0 0 0 2px rgba(0, 245, 255, 0.6);
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: none;
+    }
+
+    /* ==========================================
+       VARIANT 1: GLOW PULSE BUTTON (.btn-glow)
+       ========================================== */
+
+    .btn-glow {
+      background: radial-gradient(circle at top left, #1e314f, #050816);
+      border-color: rgba(0, 245, 255, 0.6);
+      box-shadow:
+        0 0 0 rgba(0, 245, 255, 0.0),
+        0 0 0 rgba(0, 245, 255, 0.0);
+    }
+
+    .btn-glow::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(0, 245, 255, 0.0),
+        rgba(0, 245, 255, 0.6),
+        rgba(255, 129, 255, 0.6),
+        rgba(255, 213, 107, 0.7),
+        rgba(0, 245, 255, 0.0)
+      );
+      opacity: 0;
+      filter: blur(18px);
+      transition: opacity 220ms ease;
+      z-index: 0;
+    }
+
+    .btn-glow:hover {
+      animation: btn-glow-pulse 1.4s ease-in-out infinite alternate;
+      box-shadow:
+        0 0 26px rgba(0, 245, 255, 0.35),
+        0 0 60px rgba(255, 213, 107, 0.15);
+    }
+
+    .btn-glow:hover::before {
+      opacity: 1;
+    }
+
+    @keyframes btn-glow-pulse {
+      from {
+        transform: translateY(-1px);
+      }
+      to {
+        transform: translateY(-2px) scale(1.02);
+      }
+    }
+
+    /* ==========================================
+       VARIANT 2: SLIDING GRADIENT (.btn-gradient)
+       ========================================== */
+
+    .btn-gradient {
+      background: linear-gradient(120deg, #3b82f6, #8b5cf6, #ec4899, #f97316, #3b82f6);
+      background-size: 300% 300%;
+      color: #fdfcff;
+      border: none;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.75);
+    }
+
+    .btn-gradient:hover {
+      animation: gradient-shift 2.3s ease-in-out infinite;
+      box-shadow:
+        0 15px 35px rgba(15, 23, 42, 0.85),
+        0 0 24px rgba(251, 191, 36, 0.45);
+      transform: translateY(-2px);
+    }
+
+    @keyframes gradient-shift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* ==========================================
+       VARIANT 3: NEON FLICKER (.btn-neon)
+       ========================================== */
+
+    .btn-neon {
+      background: #020617;
+      border-color: rgba(56, 189, 248, 0.8);
+      color: #e0faff;
+      text-shadow:
+        0 0 6px rgba(56, 189, 248, 0.8),
+        0 0 16px rgba(56, 189, 248, 0.9);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.45);
+    }
+
+    .btn-neon:hover {
+      animation: neon-flicker 1.4s infinite;
+      box-shadow:
+        0 0 30px rgba(56, 189, 248, 0.9),
+        0 0 55px rgba(56, 189, 248, 0.8);
+    }
+
+    @keyframes neon-flicker {
+      0%, 18%, 22%, 25%, 53%, 57%, 100% {
+        opacity: 1;
+        text-shadow:
+          0 0 6px rgba(56, 189, 248, 1),
+          0 0 18px rgba(56, 189, 248, 1),
+          0 0 30px rgba(56, 189, 248, 0.9);
+      }
+      20%, 24%, 55% {
+        opacity: 0.7;
+        text-shadow:
+          0 0 3px rgba(56, 189, 248, 0.6),
+          0 0 10px rgba(56, 189, 248, 0.7);
+      }
+    }
+
+    /* ==========================================
+       VARIANT 4: BOUNCE BUTTON (.btn-bounce)
+       ========================================== */
+
+    .btn-bounce {
+      background: #111827;
+      border-color: rgba(249, 115, 22, 0.9);
+      color: #fed7aa;
+      box-shadow: 0 8px 0 rgba(88, 28, 8, 0.9);
+      transform: translateY(0);
+    }
+
+    .btn-bounce:hover {
+      animation: bounce 600ms cubic-bezier(0.28, 0.84, 0.42, 1.2);
+    }
+
+    .btn-bounce:active {
+      transform: translateY(3px);
+      box-shadow: 0 4px 0 rgba(88, 28, 8, 0.9);
+    }
+
+    @keyframes bounce {
+      0% {
+        transform: translateY(0);
+      }
+      30% {
+        transform: translateY(-6px);
+      }
+      60% {
+        transform: translateY(-2px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    /* ==========================================
+       VARIANT 5: BORDER SWEEP (.btn-border)
+       ========================================== */
+
+    .btn-border {
+      background: #020617;
+      color: #e5e7eb;
+      border-color: rgba(148, 163, 184, 0.6);
+      overflow: hidden;
+    }
+
+    .btn-border::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background:
+        linear-gradient(120deg, transparent, rgba(96, 165, 250, 0.8), transparent);
+      transform: translateX(-100%);
+      z-index: 0;
+      transition: transform 400ms ease;
+    }
+
+    .btn-border::after {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      border-radius: inherit;
+      background: radial-gradient(circle at top left, #020617, #020617 45%, #030711);
+      z-index: 0;
+    }
+
+    .btn-border span.label {
+      z-index: 1;
+    }
+
+    .btn-border:hover::before {
+      transform: translateX(100%);
+    }
+
+    /* ==========================================
+       VARIANT 6: RIPPLE PULSE (.btn-ripple)
+       ========================================== */
+
+    .btn-ripple {
+      background: radial-gradient(circle at 20% 0%, #22c55e, #14532d);
+      color: #ecfdf5;
+      border: none;
+      box-shadow:
+        0 10px 25px rgba(21, 128, 61, 0.7),
+        0 0 0 0 rgba(34, 197, 94, 0.6);
+    }
+
+    .btn-ripple:hover {
+      animation: ripple-pulse 1.2s ease-out infinite;
+      transform: translateY(-1px);
+    }
+
+    @keyframes ripple-pulse {
+      0% {
+        box-shadow:
+          0 12px 24px rgba(21, 128, 61, 0.8),
+          0 0 0 0 rgba(34, 197, 94, 0.7);
+      }
+      70% {
+        box-shadow:
+          0 20px 45px rgba(21, 128, 61, 0.8),
+          0 0 0 18px rgba(34, 197, 94, 0);
+      }
+      100% {
+        box-shadow:
+          0 10px 24px rgba(21, 128, 61, 0.7),
+          0 0 0 0 rgba(34, 197, 94, 0);
+      }
+    }
+
+    /* ===============================
+       BASE LINK STYLES
+       =============================== */
+
+    .fancy-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: #bae6fd;
+      text-decoration: none;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition:
+        color 200ms ease,
+        transform 200ms ease,
+        text-shadow 200ms ease;
+    }
+
+    .fancy-link:focus-visible {
+      outline: 2px solid rgba(56, 189, 248, 0.7);
+      outline-offset: 3px;
+    }
+
+    /* ==========================================
+       LINK VARIANT 1: UNDERLINE SLIDE
+       (.link-underline-slide)
+       ========================================== */
+
+    .link-underline-slide::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -0.15em;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, #22c55e, #22d3ee, #a855f7);
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 220ms ease-out;
+    }
+
+    .link-underline-slide:hover {
+      color: #e0f2fe;
+    }
+
+    .link-underline-slide:hover::after {
+      transform: scaleX(1);
+    }
+
+    /* ==========================================
+       LINK VARIANT 2: NEON GLOW LINK
+       (.link-neon-glow)
+       ========================================== */
+
+    .link-neon-glow {
+      color: #7dd3fc;
+      text-shadow:
+        0 0 0 rgba(56, 189, 248, 0),
+        0 0 0 rgba(56, 189, 248, 0);
+    }
+
+    .link-neon-glow:hover {
+      color: #e0f2fe;
+      text-shadow:
+        0 0 8px rgba(56, 189, 248, 0.6),
+        0 0 16px rgba(56, 189, 248, 0.8);
+      transform: translateY(-1px);
+    }
+
+    /* ==========================================
+       LINK VARIANT 3: BRACKETS REVEAL
+       (.link-brackets)
+       ========================================== */
+
+    .link-brackets::before,
+    .link-brackets::after {
+      content: "";
+      opacity: 0;
+      transition:
+        transform 200ms ease-out,
+        opacity 200ms ease-out;
+      color: #93c5fd;
+      font-weight: 600;
+    }
+
+    .link-brackets::before {
+      content: "[";
+      transform: translateX(6px);
+      margin-right: 2px;
+    }
+
+    .link-brackets::after {
+      content: "]";
+      transform: translateX(-6px);
+      margin-left: 2px;
+    }
+
+    .link-brackets:hover::before,
+    .link-brackets:hover::after {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ==========================================
+       LINK VARIANT 4: GRADIENT TEXT
+       (.link-gradient-text)
+       ========================================== */
+
+    .link-gradient-text {
+      background: linear-gradient(120deg, #38bdf8, #a855f7, #f97316);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      color: transparent;
+      transition: background-position 260ms ease-out, transform 200ms ease-out;
+    }
+
+    .link-gradient-text:hover {
+      background-position: 100% 0%;
+      transform: translateY(-1px);
+    }
+
+    /* ==========================================
+       LINK VARIANT 5: DOTTED UNDERLINE PULSE
+       (.link-dotted-pulse)
+       ========================================== */
+
+    .link-dotted-pulse {
+      border-bottom: 1px dotted rgba(148, 163, 184, 0.8);
+      padding-bottom: 0.08em;
+    }
+
+    .link-dotted-pulse:hover {
+      color: #e5e7eb;
+      border-bottom-color: rgba(96, 165, 250, 1);
+      animation: dotted-pulse 0.5s ease-out;
+    }
+
+    @keyframes dotted-pulse {
+      0% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-1px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    /* ===============================
+       BACKGROUND DEMOS
+       =============================== */
+
+    .bg-demo {
+      width: 220px;
+      height: 120px;
+      border-radius: 0.9rem;
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.8);
+      position: relative;
+    }
+
+    .bg-demo-label {
+      position: absolute;
+      bottom: 0.35rem;
+      right: 0.6rem;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(226, 232, 240, 0.9);
+      background: rgba(15, 23, 42, 0.8);
+      padding: 0.25rem 0.4rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+    }
+
+    /* BG VARIANT 1: Animated Gradient Pan */
+    .bg-gradient-pan {
+      background: linear-gradient(135deg, #1d4ed8, #9333ea, #ec4899, #f97316);
+      background-size: 250% 250%;
+      animation: bg-gradient-pan 12s ease-in-out infinite;
+    }
+
+    @keyframes bg-gradient-pan {
+      0% {
+        background-position: 0% 0%;
+      }
+      50% {
+        background-position: 100% 100%;
+      }
+      100% {
+        background-position: 0% 0%;
+      }
+    }
+
+    /* BG VARIANT 2: Soft Radial Pulse */
+    .bg-radial-pulse {
+      background:
+        radial-gradient(circle at 20% 0%, rgba(56, 189, 248, 0.5), transparent 50%),
+        radial-gradient(circle at 80% 100%, rgba(244, 114, 182, 0.5), transparent 55%),
+        radial-gradient(circle at 50% 50%, #020617, #020617 55%, #020617 100%);
+      animation: bg-radial-pulse 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes bg-radial-pulse {
+      0% {
+        transform: scale(1);
+        filter: blur(0px);
+      }
+      100% {
+        transform: scale(1.03);
+        filter: blur(1px);
+      }
+    }
+
+    /* BG VARIANT 3: Diagonal Stripes */
+    .bg-stripes {
+      background:
+        linear-gradient(135deg, #020617, #020617),
+        repeating-linear-gradient(
+          135deg,
+          rgba(56, 189, 248, 0.15),
+          rgba(56, 189, 248, 0.15) 8px,
+          transparent 8px,
+          transparent 16px
+        );
+      background-blend-mode: overlay;
+      background-size: 100% 100%, 140% 140%;
+      animation: bg-stripes-move 6s linear infinite;
+    }
+
+    @keyframes bg-stripes-move {
+      0% {
+        background-position: 0 0, 0 0;
+      }
+      100% {
+        background-position: 0 0, 120px 120px;
+      }
+    }
+
+    /* BG VARIANT 4: Twinkling Stars */
+    .bg-stars {
+      background-color: #020617;
+      background-image:
+        radial-gradient(2px 2px at 20% 20%, rgba(248, 250, 252, 0.95), transparent),
+        radial-gradient(1.5px 1.5px at 80% 10%, rgba(191, 219, 254, 0.85), transparent),
+        radial-gradient(1.8px 1.8px at 60% 70%, rgba(248, 250, 252, 0.8), transparent),
+        radial-gradient(1.2px 1.2px at 15% 85%, rgba(191, 219, 254, 0.7), transparent);
+      background-repeat: no-repeat;
+      animation: bg-stars-twinkle 3.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes bg-stars-twinkle {
+      0% {
+        opacity: 0.7;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.01);
+      }
+      100% {
+        opacity: 0.8;
+        transform: scale(1);
+      }
+    }
+
+    /* BG VARIANT 5: Sheen Sweep */
+    .bg-sheen {
+      background: radial-gradient(circle at top, #020617, #020617 60%, #020617 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bg-sheen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(248, 250, 252, 0.1) 40%,
+        rgba(248, 250, 252, 0.35) 50%,
+        rgba(248, 250, 252, 0.1) 60%,
+        transparent 100%
+      );
+      transform: translateX(-120%);
+      animation: bg-sheen-sweep 4.5s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+    }
+
+    @keyframes bg-sheen-sweep {
+      0% {
+        transform: translateX(-120%);
+      }
+      60% {
+        transform: translateX(120%);
+      }
+      100% {
+        transform: translateX(120%);
+      }
+    }
+
+    /* ===============================
+       FOOTER HINT
+       =============================== */
+
+    .hint {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .hint strong {
+      color: #e5fffd;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <h1>CSS Animation Gallery</h1>
+      <p>Buttons, links, and backgrounds &mdash; each in clearly separated, reusable chunks.</p>
+      <p class="tagline">
+        Section 01 &mdash; Buttons · Section 02 &mdash; Links · Section 03 &mdash; Backgrounds
+      </p>
+    </header>
+
+    <!-- ===============================
+         SECTION 1: BUTTONS
+         =============================== -->
+    <section>
+      <h2 class="section-title">Animated Buttons</h2>
+      <p class="section-desc">
+        Copy the <strong>.btn</strong> base styles and then pick <em>one</em> of the
+        variants below (like <code>.btn-glow</code>). In your HTML, you’ll usually write
+        something like: <code>&lt;button class="btn btn-glow"&gt;...&lt;/button&gt;</code>.
+      </p>
+
+      <div class="button-list">
+
+        <!-- VARIANT 1: Glow Pulse -->
+        <article class="button-card">
+          <div class="button-card-header">
+            <div class="button-card-title">Glow Pulse Button</div>
+            <p class="button-card-desc">
+              Soft sci-fi glow that gently pulses upward when you hover. Great for
+              “Primary” actions.
+            </p>
+            <p class="button-card-classes">
+              Classes to use: <code>class="btn btn-glow"</code>
+            </p>
+          </div>
+          <div class="button-card-demo">
+            <button class="btn btn-glow">
+              <span class="label">Glow Pulse</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- VARIANT 2: Sliding Gradient -->
+        <article class="button-card">
+          <div class="button-card-header">
+            <div class="button-card-title">Sliding Gradient Button</div>
+            <p class="button-card-desc">
+              Animated rainbow gradient that moves left to right on hover using
+              <code>@keyframes</code> on the background position.
+            </p>
+            <p class="button-card-classes">
+              Classes to use: <code>class="btn btn-gradient"</code>
+            </p>
+          </div>
+          <div class="button-card-demo">
+            <button class="btn btn-gradient">
+              <span class="label">Sliding Gradient</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- VARIANT 3: Neon Flicker -->
+        <article class="button-card">
+          <div class="button-card-header">
+            <div class="button-card-title">Neon Flicker Button</div>
+            <p class="button-card-desc">
+              Cyberpunk sign-style flicker using animated <code>text-shadow</code> and
+              opacity. Hover to turn on the effect.
+            </p>
+            <p class="button-card-classes">
+              Classes to use: <code>class="btn btn-neon"</code>
+            </p>
+          </div>
+          <div class="button-card-demo">
+            <button class="btn btn-neon">
+              <span class="label">Neon Flicker</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- VARIANT 4: Bounce -->
+        <article class="button-card">
+          <div class="button-card-header">
+            <div class="button-card-title">Bounce Button</div>
+            <p class="button-card-desc">
+              Cartoon-like bounce when you hover, plus a “pressed” look when you click.
+              Feels like a physical button.
+            </p>
+            <p class="button-card-classes">
+              Classes to use: <code>class="btn btn-bounce"</code>
+            </p>
+          </div>
+          <div class="button-card-demo">
+            <button class="btn btn-bounce">
+              <span class="label">Bounce</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- VARIANT 5: Border Sweep -->
+        <article class="button-card">
+          <div class="button-card-header">
+            <div class="button-card-title">Border Sweep Button</div>
+            <p class="button-card-desc">
+              A shiny line “sweeps” across the border using <code>::before</code>, while
+              <code>::after</code> keeps the inside dark.
+            </p>
+            <p class="button-card-classes">
+              Classes to use: <code>class="btn btn-border"</code>
+            </p>
+          </div>
+          <div class="button-card-demo">
+            <button class="btn btn-border">
+              <span class="label">Border Sweep</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- VARIANT 6: Ripple Pulse -->
+        <article class="button-card">
+          <div class="button-card-header">
+            <div class="button-card-title">Ripple Pulse Button</div>
+            <p class="button-card-desc">
+              Uses a pulsing <code>box-shadow</code> to fake a green ripple around the
+              button. Nice for “success” actions.
+            </p>
+            <p class="button-card-classes">
+              Classes to use: <code>class="btn btn-ripple"</code>
+            </p>
+          </div>
+          <div class="button-card-demo">
+            <button class="btn btn-ripple">
+              <span class="label">Ripple Pulse</span>
+            </button>
+          </div>
+        </article>
+
+      </div>
+
+      <p class="hint">
+        Tutorial idea:
+        <strong>start with .btn only</strong>,
+        then add one variant at a time and explain how the animation works
+        (<code>@keyframes</code>, <code>:hover</code>, <code>::before</code>, etc.).
+      </p>
+    </section>
+
+    <!-- ===============================
+         SECTION 2: LINKS
+         =============================== -->
+    <section style="margin-top: 2.5rem;">
+      <h2 class="section-title">Animated Links</h2>
+      <p class="section-desc">
+        Links use a base <strong>.fancy-link</strong> class plus one variant, for example:
+        <code>&lt;a href="#" class="fancy-link link-underline-slide"&gt;Docs&lt;/a&gt;</code>.
+        This keeps them easy to reuse in navigation bars, footers, or article text.
+      </p>
+
+      <div class="link-list">
+
+        <!-- LINK VARIANT 1: Underline Slide -->
+        <article class="link-card">
+          <div class="link-card-header">
+            <div class="link-card-title">Underline Slide Link</div>
+            <p class="link-card-desc">
+              A clean underline that slides in from left to right on hover using
+              <code>::after</code>. Good default for modern sites.
+            </p>
+            <p class="link-card-classes">
+              Classes to use:
+              <code>class="fancy-link link-underline-slide"</code>
+            </p>
+          </div>
+          <div class="link-card-demo">
+            <a href="#" class="fancy-link link-underline-slide">Read the Docs</a>
+          </div>
+        </article>
+
+        <!-- LINK VARIANT 2: Neon Glow -->
+        <article class="link-card">
+          <div class="link-card-header">
+            <div class="link-card-title">Neon Glow Link</div>
+            <p class="link-card-desc">
+              Glowing blue link that lights up like a neon sign when hovered, using
+              <code>text-shadow</code>.
+            </p>
+            <p class="link-card-classes">
+              Classes to use:
+              <code>class="fancy-link link-neon-glow"</code>
+            </p>
+          </div>
+          <div class="link-card-demo">
+            <a href="#" class="fancy-link link-neon-glow">Join the Lobby</a>
+          </div>
+        </article>
+
+        <!-- LINK VARIANT 3: Brackets Reveal -->
+        <article class="link-card">
+          <div class="link-card-header">
+            <div class="link-card-title">Brackets Reveal Link</div>
+            <p class="link-card-desc">
+              Brackets slide in around the link text on hover using <code>::before</code>
+              and <code>::after</code>. Great for menu items or filters.
+            </p>
+            <p class="link-card-classes">
+              Classes to use:
+              <code>class="fancy-link link-brackets"</code>
+            </p>
+          </div>
+          <div class="link-card-demo">
+            <a href="#" class="fancy-link link-brackets">View Leaderboard</a>
+          </div>
+        </article>
+
+        <!-- LINK VARIANT 4: Gradient Text -->
+        <article class="link-card">
+          <div class="link-card-header">
+            <div class="link-card-title">Gradient Text Link</div>
+            <p class="link-card-desc">
+              Text itself is a moving gradient. Uses <code>-webkit-background-clip: text</code>
+              and a subtle position shift on hover.
+            </p>
+            <p class="link-card-classes">
+              Classes to use:
+              <code>class="fancy-link link-gradient-text"</code>
+            </p>
+          </div>
+          <div class="link-card-demo">
+            <a href="#" class="fancy-link link-gradient-text">Block Burner Blog</a>
+          </div>
+        </article>
+
+        <!-- LINK VARIANT 5: Dotted Underline Pulse -->
+        <article class="link-card">
+          <div class="link-card-header">
+            <div class="link-card-title">Dotted Underline Pulse Link</div>
+            <p class="link-card-desc">
+              Classic dotted underline that changes color and gives a tiny bounce on
+              hover. Ideal for in-text references.
+            </p>
+            <p class="link-card-classes">
+              Classes to use:
+              <code>class="fancy-link link-dotted-pulse"</code>
+            </p>
+          </div>
+          <div class="link-card-demo">
+            <a href="#" class="fancy-link link-dotted-pulse">See Documentation</a>
+          </div>
+        </article>
+
+      </div>
+
+      <p class="hint">
+        Tutorial idea:
+        <strong>start with plain &lt;a&gt; tags</strong>, then add
+        <code>.fancy-link</code>, then layer each variant to teach
+        pseudo-elements and hover transitions.
+      </p>
+    </section>
+
+    <!-- ===============================
+         SECTION 3: BACKGROUNDS
+         =============================== -->
+    <section style="margin-top: 2.5rem;">
+      <h2 class="section-title">Animated Backgrounds</h2>
+      <p class="section-desc">
+        These are reusable background utilities for cards, hero sections, or panels.
+        Use a base <strong>.bg-demo</strong> style while building, then move the variant
+        class (like <code>.bg-gradient-pan</code>) onto your own container.
+      </p>
+
+      <div class="background-list">
+
+        <!-- BG VARIANT 1: Gradient Pan -->
+        <article class="bg-card">
+          <div class="bg-card-header">
+            <div class="bg-card-title">Gradient Pan Background</div>
+            <p class="bg-card-desc">
+              A slow-moving multi-color gradient. Great for hero sections or full-page
+              backgrounds.
+            </p>
+            <p class="bg-card-classes">
+              Classes to use:
+              <code>class="bg-gradient-pan"</code>
+              (optionally with your own sizing/radius)
+            </p>
+          </div>
+          <div class="bg-card-demo">
+            <div class="bg-demo bg-gradient-pan">
+              <span class="bg-demo-label">Gradient Pan</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- BG VARIANT 2: Soft Radial Pulse -->
+        <article class="bg-card">
+          <div class="bg-card-header">
+            <div class="bg-card-title">Soft Radial Pulse Background</div>
+            <p class="bg-card-desc">
+              Multiple radial gradients that gently breathe in and out. Nice behind
+              modals, cards, or dashboards.
+            </p>
+            <p class="bg-card-classes">
+              Classes to use:
+              <code>class="bg-radial-pulse"</code>
+            </p>
+          </div>
+          <div class="bg-card-demo">
+            <div class="bg-demo bg-radial-pulse">
+              <span class="bg-demo-label">Radial Pulse</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- BG VARIANT 3: Diagonal Stripes -->
+        <article class="bg-card">
+          <div class="bg-card-header">
+            <div class="bg-card-title">Diagonal Stripes Background</div>
+            <p class="bg-card-desc">
+              Animated diagonal stripes created with
+              <code>repeating-linear-gradient</code>. Subtle motion for headers or
+              code blocks.
+            </p>
+            <p class="bg-card-classes">
+              Classes to use:
+              <code>class="bg-stripes"</code>
+            </p>
+          </div>
+          <div class="bg-card-demo">
+            <div class="bg-demo bg-stripes">
+              <span class="bg-demo-label">Stripes</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- BG VARIANT 4: Twinkling Stars -->
+        <article class="bg-card">
+          <div class="bg-card-header">
+            <div class="bg-card-title">Twinkling Stars Background</div>
+            <p class="bg-card-desc">
+              Fake a star field with several small radial gradients and a subtle
+              twinkle animation.
+            </p>
+            <p class="bg-card-classes">
+              Classes to use:
+              <code>class="bg-stars"</code>
+            </p>
+          </div>
+          <div class="bg-card-demo">
+            <div class="bg-demo bg-stars">
+              <span class="bg-demo-label">Stars</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- BG VARIANT 5: Sheen Sweep -->
+        <article class="bg-card">
+          <div class="bg-card-header">
+            <div class="bg-card-title">Sheen Sweep Background</div>
+            <p class="bg-card-desc">
+              A light “sheen” sweeps across the surface using a <code>::before</code>
+              gradient. Good for cards or CTAs.
+            </p>
+            <p class="bg-card-classes">
+              Classes to use:
+              <code>class="bg-sheen"</code>
+            </p>
+          </div>
+          <div class="bg-card-demo">
+            <div class="bg-demo bg-sheen">
+              <span class="bg-demo-label">Sheen Sweep</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <p class="hint">
+        Tutorial idea:
+        show each background inside a fixed-height <code>.bg-demo</code> first, then
+        apply the same class to a full-width section to demonstrate reuse.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CSS Button Animation Gallery</title>
+  <style>
+    /* ---------- Page layout ---------- */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 2rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top, #222 0, #050507 55%);
+      color: #f2f2f2;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 1.4rem;
+      color: #ffe38a;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .example {
+      border-radius: 14px;
+      padding: 1.2rem 1.2rem 1.4rem;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 18px 35px rgba(0, 0, 0, 0.55);
+    }
+
+    .example-title {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.75rem;
+      color: #d0d0d0;
+    }
+
+    .example-label {
+      font-size: 0.78rem;
+      opacity: 0.6;
+      margin-top: 0.5rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    /* ---------- Base button style (shared) ---------- */
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8rem 1.8rem;
+      border-radius: 999px;
+      border: none;
+      outline: none;
+      background: #1d1d1d;
+      color: #f5f5f5;
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      overflow: hidden;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+    }
+
+    /* ============================================================
+       1) Pulse (always gently pulsing)
+       ============================================================ */
+
+    .btn-pulse {
+      background: linear-gradient(135deg, #ff0077, #ff6a00);
+      box-shadow:
+        0 0 12px rgba(255, 0, 119, 0.7),
+        0 0 32px rgba(255, 106, 0, 0.6);
+      animation: pulse 1.4s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow:
+          0 0 0 0 rgba(255, 0, 119, 0.6),
+          0 0 24px rgba(255, 106, 0, 0.6);
+      }
+      70% {
+        transform: scale(1.08);
+        box-shadow:
+          0 0 0 14px rgba(255, 0, 119, 0),
+          0 0 32px rgba(255, 106, 0, 0.7);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow:
+          0 0 0 0 rgba(255, 0, 119, 0),
+          0 0 24px rgba(255, 106, 0, 0.6);
+      }
+    }
+
+    /* ============================================================
+       2) Glow on hover
+       ============================================================ */
+
+    .btn-glow {
+      background: radial-gradient(circle at top left, #00f5ff, #00ff85);
+      box-shadow: 0 0 0 rgba(0, 245, 255, 0.9);
+    }
+
+    .btn-glow:hover {
+      box-shadow:
+        0 0 12px rgba(0, 245, 255, 0.9),
+        0 0 28px rgba(0, 255, 133, 0.7);
+    }
+
+    /* ============================================================
+       3) Fade on hover (button fades out a bit)
+       ============================================================ */
+
+    .btn-fade {
+      background: #323232;
+      opacity: 1;
+      transition:
+        opacity 0.35s ease,
+        transform 0.35s ease,
+        box-shadow 0.35s ease;
+    }
+
+    .btn-fade:hover {
+      opacity: 0.4;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.75);
+    }
+
+    /* ============================================================
+       4) Shine across (light sweep from left to right)
+       ============================================================ */
+
+    .btn-shine {
+      background: linear-gradient(135deg, #202020, #363636);
+    }
+
+    .btn-shine::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.9) 40%,
+        transparent 80%
+      );
+      transform: translateX(-150%) skewX(-25deg);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .btn-shine:hover::before {
+      opacity: 1;
+      animation: shine 0.75s forwards;
+    }
+
+    @keyframes shine {
+      0% {
+        transform: translateX(-150%) skewX(-25deg);
+      }
+      100% {
+        transform: translateX(150%) skewX(-25deg);
+      }
+    }
+
+    /* ============================================================
+       5) Sparks moving around the edge
+          (animated conic-gradient border, visible on hover)
+       ============================================================ */
+
+    .btn-sparks {
+      background: #111;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 219, 112, 0.55);
+      box-shadow: 0 0 15px rgba(255, 219, 112, 0.35);
+    }
+
+    .btn-sparks::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background:
+        conic-gradient(
+          from 0deg,
+          transparent 0deg,
+          transparent 60deg,
+          #fff7c4 90deg,
+          transparent 120deg,
+          transparent 180deg,
+          #ffe38a 210deg,
+          transparent 240deg,
+          transparent 360deg
+        );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      padding: 2px;
+      opacity: 0;
+      transform-origin: center;
+      animation: sparks-spin 1.3s linear infinite;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .btn-sparks:hover::before {
+      opacity: 1;
+    }
+
+    @keyframes sparks-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ============================================================
+       6) 3D press-down effect
+       ============================================================ */
+
+    .btn-press {
+      background: linear-gradient(180deg, #0084ff, #0040b9);
+      box-shadow:
+        0 6px 0 #002d80,
+        0 12px 18px rgba(0, 0, 0, 0.65);
+      transform: translateY(0);
+      transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease;
+    }
+
+    .btn-press:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 7px 0 #002d80,
+        0 16px 24px rgba(0, 0, 0, 0.75);
+    }
+
+    .btn-press:active {
+      transform: translateY(3px);
+      box-shadow:
+        0 3px 0 #002d80,
+        0 8px 14px rgba(0, 0, 0, 0.7);
+    }
+
+    /* ============================================================
+       7) Wiggle on hover
+       ============================================================ */
+
+    .btn-wiggle {
+      background: linear-gradient(135deg, #ff4b6e, #ff9f4b);
+    }
+
+    .btn-wiggle:hover {
+      animation: wiggle 0.4s ease-in-out;
+    }
+
+    @keyframes wiggle {
+      0% {
+        transform: translateX(0);
+      }
+      25% {
+        transform: translateX(-3px) rotate(-1deg);
+      }
+      50% {
+        transform: translateX(3px) rotate(1deg);
+      }
+      75% {
+        transform: translateX(-2px) rotate(-0.7deg);
+      }
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    /* ============================================================
+       8) Gradient slide (background moves on hover)
+       ============================================================ */
+
+    .btn-gradient-slide {
+      background: linear-gradient(120deg, #7f5dff, #f35dff, #7f5dff);
+      background-size: 220%;
+      transition:
+        background-position 0.6s ease,
+        box-shadow 0.3s ease,
+        transform 0.2s ease;
+    }
+
+    .btn-gradient-slide:hover {
+      background-position: 100% 0;
+      box-shadow: 0 18px 35px rgba(127, 93, 255, 0.7);
+    }
+
+    /* ============================================================
+       9) Ripple on hover (fake ripple using ::after)
+       ============================================================ */
+
+    .btn-ripple {
+      background: #191919;
+    }
+
+    .btn-ripple::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(0);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        transform 0.5s ease,
+        opacity 0.5s ease;
+    }
+
+    .btn-ripple:hover::after {
+      transform: scale(12);
+      opacity: 0;
+    }
+
+    /* Put ripple at center */
+    .btn-ripple {
+      position: relative;
+    }
+
+    .btn-ripple::after {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+    }
+
+    .btn-ripple:hover::after {
+      transform: translate(-50%, -50%) scale(12);
+    }
+  </style>
+</head>
+<body>
+  <h1>CSS Button Animation Gallery</h1>
+
+  <div class="grid">
+    <!-- 1) Pulse -->
+    <div class="example">
+      <div class="example-title">Pulse (always active)</div>
+      <!-- HTML to copy: -->
+      <button class="btn btn-pulse">Pulse</button>
+      <div class="example-label">Classes: <code>btn btn-pulse</code></div>
+    </div>
+
+    <!-- 2) Glow on hover -->
+    <div class="example">
+      <div class="example-title">Glow on Hover</div>
+      <!-- HTML to copy: -->
+      <button class="btn btn-glow">Glow</button>
+      <div class="example-label">Classes: <code>btn btn-glow</code></div>
+    </div>
+
+    <!-- 3) Fade on hover -->
+    <div class="example">
+      <div class="example-title">Fade on Hover</div>
+      <!-- HTML to copy: -->
+      <button class="btn btn-fade">Fade</button>
+      <div class="example-label">Classes: <code>btn btn-fade</code></div>
+    </div>
+
+    <!-- 4) Shine across -->
+    <div class="example">
+      <div class="example-title">Shine Across</div>
+      <!-- HTML to copy: -->
+      <button class="btn btn-shine">Shine</button>
+      <div class="example-label">Classes: <code>btn btn-shine</code></div>
+    </div>
+
+    <!-- 5) Sparks around edge -->
+    <div class="example">
+      <div class="example-title">Sparks Around Edge</div>
+      <!-- HTML to copy: -->
+      <button class="btn btn-sparks">Sparks</button>
+      <div class="example-label">Classes: <code>btn btn-sparks</code></div>
+    </div>
+
+    <!-- 6) 3D press-down -->
+    <div class="example">
+      <div class="example-title">3D Press Down</div>
+      <!-- HTML to copy: -->
+      <button class="btn btn-press">Press Me</button>
+      <div class="example-label">Classes: <code>btn btn-press</code></div>
+    </div>
+
+    <!-- 7) Wiggle on hover -->
+    <div class="example">
+      <div class="example-title">Wiggle on Hover</div>
+      <!-- HTML to copy: -->
+      <button class="btn btn-wiggle">Wiggle</button>
+      <div class="example-label">Classes: <code>btn btn-wiggle</code></div>
+    </div>
+
+    <!-- 8) Gradient slide -->
+    <div class="example">
+      <div class="example-title">Gradient Slide</div>
+      <!-- HTML to copy: -->
+      <button class="btn btn-gradient-slide">Slide</button>
+      <div class="example-label">Classes: <code>btn btn-gradient-slide</code></div>
+    </div>
+
+    <!-- 9) Ripple on hover -->
+    <div class="example">
+      <div class="example-title">Ripple on Hover</div>
+      <!-- HTML to copy: -->
+      <button class="btn btn-ripple">Ripple</button>
+      <div class="example-label">Classes: <code>btn btn-ripple</code></div>
+    </div>
+  </div>
+</body>
+</html>

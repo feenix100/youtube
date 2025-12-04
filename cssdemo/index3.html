@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CSS Animation Playground</title>
+  <style>
+    /* ---------- Global layout + smooth scroll ---------- */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      padding: 2rem 1.5rem 3rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top, #222 0, #050507 55%);
+      color: #f2f2f2;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 1.4rem;
+      color: #ffe38a;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ---------- Top nav for jumping between sections ---------- */
+
+    .top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .top-nav a {
+      text-decoration: none;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #e8e8e8;
+      background: rgba(10, 10, 10, 0.8);
+      transition:
+        back-ground 0.25s ease,
+        color 0.25s ease,
+        transform 0.15s ease,
+        box-shadow 0.25s ease;
+    }
+
+    .top-nav a:hover {
+      background: linear-gradient(135deg, #ffe38a, #ff9f4b);
+      color: #111;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.7);
+    }
+
+    /* ---------- Section blocks ---------- */
+
+    .section-block {
+      max-width: 1100px;
+      margin: 0 auto 2.5rem;
+      padding: 1.5rem 1.5rem 1.8rem;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 18px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .section-heading {
+      margin: 0 0 0.6rem;
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #f4f4f4;
+    }
+
+    .section-description {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-bottom: 1.2rem;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .example {
+      border-radius: 14px;
+      padding: 1.1rem 1.2rem 1.4rem;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 18px 30px rgba(0, 0, 0, 0.55);
+    }
+
+    .example-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.75rem;
+      color: #d0d0d0;
+    }
+
+    .example-label {
+      font-size: 0.78rem;
+      opacity: 0.6;
+      margin-top: 0.5rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    /* ============================================================
+       BUTTONS SECTION
+       ============================================================ */
+
+    /* Base button style (shared) */
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8rem 1.8rem;
+      border-radius: 999px;
+      border: none;
+      outline: none;
+      background: #1d1d1d;
+      color: #f5f5f5;
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      overflow: hidden;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        back-ground 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+    }
+
+    /* 1) Pulse (always active) */
+    .btn-pulse {
+      background: linear-gradient(135deg, #ff0077, #ff6a00);
+      box-shadow:
+        0 0 12px rgba(255, 0, 119, 0.7),
+        0 0 32px rgba(255, 106, 0, 0.6);
+      animation: pulse 1.4s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow:
+          0 0 0 0 rgba(255, 0, 119, 0.6),
+          0 0 24px rgba(255, 106, 0, 0.6);
+      }
+      70% {
+        transform: scale(1.08);
+        box-shadow:
+          0 0 0 14px rgba(255, 0, 119, 0),
+          0 0 32px rgba(255, 106, 0, 0.7);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow:
+          0 0 0 0 rgba(255, 0, 119, 0),
+          0 0 24px rgba(255, 106, 0, 0.6);
+      }
+    }
+
+    /* 2) Glow on hover */
+    .btn-glow {
+      background: radial-gradient(circle at top left, #00f5ff, #00ff85);
+      box-shadow: 0 0 0 rgba(0, 245, 255, 0.9);
+    }
+
+    .btn-glow:hover {
+      box-shadow:
+        0 0 12px rgba(0, 245, 255, 0.9),
+        0 0 28px rgba(0, 255, 133, 0.7);
+    }
+
+    /* 3) Fade on hover */
+    .btn-fade {
+      background: #323232;
+      opacity: 1;
+      transition:
+        opacity 0.35s ease,
+        transform 0.35s ease,
+        box-shadow 0.35s ease;
+    }
+
+    .btn-fade:hover {
+      opacity: 0.4;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.75);
+    }
+
+    /* 4) Shine across */
+    .btn-shine {
+      background: linear-gradient(135deg, #202020, #363636);
+    }
+
+    .btn-shine::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.9) 40%,
+        transparent 80%
+      );
+      transform: translateX(-150%) skewX(-25deg);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .btn-shine:hover::before {
+      opacity: 1;
+      animation: shine 0.75s forwards;
+    }
+
+    @keyframes shine {
+      0% {
+        transform: translateX(-150%) skewX(-25deg);
+      }
+      100% {
+        transform: translateX(150%) skewX(-25deg);
+      }
+    }
+
+    /* 5) Sparks around edge */
+    .btn-sparks {
+      background: #111;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 219, 112, 0.55);
+      box-shadow: 0 0 15px rgba(255, 219, 112, 0.35);
+    }
+
+    .btn-sparks::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background:
+        conic-gradient(
+          from 0deg,
+          transparent 0deg,
+          transparent 60deg,
+          #fff7c4 90deg,
+          transparent 120deg,
+          transparent 180deg,
+          #ffe38a 210deg,
+          transparent 240deg,
+          transparent 360deg
+        );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      padding: 2px;
+      opacity: 0;
+      transform-origin: center;
+      animation: sparks-spin 1.3s linear infinite;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .btn-sparks:hover::before {
+      opacity: 1;
+    }
+
+    @keyframes sparks-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* 6) 3D press-down */
+    .btn-press {
+      background: linear-gradient(180deg, #0084ff, #0040b9);
+      box-shadow:
+        0 6px 0 #002d80,
+        0 12px 18px rgba(0, 0, 0, 0.65);
+      transform: translateY(0);
+      transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease;
+    }
+
+    .btn-press:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 7px 0 #002d80,
+        0 16px 24px rgba(0, 0, 0, 0.75);
+    }
+
+    .btn-press:active {
+      transform: translateY(3px);
+      box-shadow:
+        0 3px 0 #002d80,
+        0 8px 14px rgba(0, 0, 0, 0.7);
+    }
+
+    /* 7) Wiggle on hover */
+    .btn-wiggle {
+      background: linear-gradient(135deg, #ff4b6e, #ff9f4b);
+    }
+
+    .btn-wiggle:hover {
+      animation: wiggle 0.4s ease-in-out;
+    }
+
+    @keyframes wiggle {
+      0% {
+        transform: translateX(0);
+      }
+      25% {
+        transform: translateX(-3px) rotate(-1deg);
+      }
+      50% {
+        transform: translateX(3px) rotate(1deg);
+      }
+      75% {
+        transform: translateX(-2px) rotate(-0.7deg);
+      }
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    /* 8) Gradient slide */
+    .btn-gradient-slide {
+      background: linear-gradient(120deg, #7f5dff, #f35dff, #7f5dff);
+      background-size: 220%;
+      transition:
+        background-position 0.6s ease,
+        box-shadow 0.3s ease,
+        transform 0.2s ease;
+    }
+
+    .btn-gradient-slide:hover {
+      background-position: 100% 0;
+      box-shadow: 0 18px 35px rgba(127, 93, 255, 0.7);
+    }
+
+    /* 9) Ripple on hover */
+    .btn-ripple {
+      background: #191919;
+      position: relative;
+    }
+
+    .btn-ripple::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.4);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        transform 0.5s ease,
+        opacity 0.5s ease;
+    }
+
+    .btn-ripple:hover::after {
+      transform: translate(-50%, -50%) scale(12);
+      opacity: 0;
+    }
+
+    /* ============================================================
+   LINKS SECTION (NEW COLORFUL VERSION)
+   ============================================================ */
+
+/* Base link style */
+.link-demo {
+  position: relative;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: #ffffff;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* 1) Rainbow underline (always moving) */
+.link-rainbow-underline {
+  padding-bottom: 4px;
+  background-image: linear-gradient(
+    90deg,
+    #ff4b6e,
+    #ffcf4b,
+    #7afcff,
+    #b86bff,
+    #ff4b6e
+  );
+  background-size: 300% 2px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  animation: rainbow-underline 2.5s linear infinite;
+}
+
+@keyframes rainbow-underline {
+  0% {
+    background-position: 0 100%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+/* 2) Neon pop (glow + tiny bounce) */
+.link-neon-pop {
+  text-shadow:
+    0 0 8px rgba(122, 252, 255, 0.8),
+    0 0 18px rgba(0, 180, 255, 0.7);
+  transition:
+    transform 0.2s ease,
+    text-shadow 0.2s ease,
+    color 0.2s ease;
+}
+
+.link-neon-pop:hover {
+  color: #7afcff;
+  transform: translateY(-2px) scale(1.05);
+  text-shadow:
+    0 0 10px rgba(122, 252, 255, 1),
+    0 0 28px rgba(0, 180, 255, 0.9);
+}
+
+/* 3) Bubble highlight (color blob whooshes in behind text) */
+.link-bubble {
+  padding: 4px 8px;
+  z-index: 0;
+}
+
+.link-bubble::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: radial-gradient(circle at 0% 0%, #ffcf4b, #ff4b6e);
+  transform: scale(0);
+  opacity: 0;
+  transform-origin: center;
+  transition:
+    transform 0.25s ease-out,
+    opacity 0.25s ease-out;
+  z-index: -1;
+}
+
+.link-bubble:hover::before {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+/* 4) Wobble (silly hover rotation) */
+.link-wobble {
+  display: inline-block;
+  transition: transform 0.15s ease-out;
+}
+
+.link-wobble:hover {
+  animation: wobble-link 0.45s ease-out;
+}
+
+@keyframes wobble-link {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-6deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* 5) Glitch (RGB split jitter) */
+.link-glitch {
+  display: inline-block;
+  color: #ffffff;
+  text-shadow:
+    1px 0 rgba(255, 0, 128, 0.8),
+    -1px 0 rgba(0, 255, 255, 0.8);
+  transition: transform 0.15s ease;
+}
+
+.link-glitch:hover {
+  animation: glitchy 0.45s steps(2, end);
+}
+
+@keyframes glitchy {
+  0% {
+    transform: translate(0, 0);
+    text-shadow:
+      1px 0 rgba(255, 0, 128, 0.8),
+      -1px 0 rgba(0, 255, 255, 0.8);
+  }
+  25% {
+    transform: translate(-1px, -1px);
+    text-shadow:
+      2px 0 rgba(255, 0, 128, 0.8),
+      -2px 0 rgba(0, 255, 255, 0.8);
+  }
+  50% {
+    transform: translate(1px, 1px);
+    text-shadow:
+      -2px 0 rgba(255, 0, 128, 0.8),
+      2px 0 rgba(0, 255, 255, 0.8);
+  }
+  75% {
+    transform: translate(-1px, 1px);
+    text-shadow:
+      1px 0 rgba(255, 0, 128, 0.8),
+      -1px 0 rgba(0, 255, 255, 0.8);
+  }
+  100% {
+    transform: translate(0, 0);
+    text-shadow:
+      1px 0 rgba(255, 0, 128, 0.8),
+      -1px 0 rgba(0, 255, 255, 0.8);
+  }
+}
+
+/* 6) Comet underline (little dot streaks across) */
+.link-comet {
+  padding-bottom: 4px;
+}
+
+.link-comet::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, #ffcf4b, transparent);
+  opacity: 0;
+  transform: translateX(-30%);
+  transition:
+    opacity 0.15s ease-out,
+    transform 0.3s ease-out;
+}
+
+.link-comet::after {
+  content: "";
+  position: absolute;
+  bottom: 0.5px;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffcf4b;
+  box-shadow: 0 0 10px rgba(255, 207, 75, 0.9);
+  opacity: 0;
+  transform: translateX(-30%);
+  transition:
+    opacity 0.15s ease-out,
+    transform 0.3s ease-out;
+}
+
+.link-comet:hover::before,
+.link-comet:hover::after {
+  opacity: 1;
+  transform: translateX(90%);
+}
+
+/* 7) Firefly sparkles (tiny lights blinking around text) */
+.link-firefly {
+  padding: 3px 6px;
+  background-image: radial-gradient(circle, #ffffff 1px, transparent 2px);
+  background-size: 10px 10px;
+  background-position: 0 0;
+  animation: firefly-move 2.2s linear infinite;
+}
+
+@keyframes firefly-move {
+  0% {
+    background-position: 0 0;
+    opacity: 0.6;
+  }
+  50% {
+    background-position: 5px 5px;
+    opacity: 1;
+  }
+  100% {
+    background-position: 10px 10px;
+    opacity: 0.6;
+  }
+}
+
+/* 8) Rainbow text (animated gradient text) */
+.link-rainbow-text {
+  background: linear-gradient(
+    90deg,
+    #ff4b6e,
+    #ffcf4b,
+    #7afcff,
+    #b86bff,
+    #ff4b6e
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbow-text-shift 3s linear infinite;
+}
+
+@keyframes rainbow-text-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* 9) Pill badge with sliding shine */
+.link-pill-shine {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #191919;
+  overflow: hidden;
+}
+
+.link-pill-shine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.7) 40%,
+    transparent 80%
+  );
+  transform: translateX(-150%) skewX(-20deg);
+  opacity: 0;
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.6s ease-out;
+}
+
+.link-pill-shine:hover::before {
+  opacity: 1;
+  transform: translateX(150%) skewX(-20deg);
+}
+
+.link-pill-shine span {
+  position: relative;
+  z-index: 1;
+}
+
+
+    /* ============================================================
+       BACKGROUNDS SECTION (EXPANDED)
+       ============================================================ */
+
+    .bg-demo {
+      position: relative;
+      height: 130px;
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #fdfdfd;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* 1) Moving gradient */
+    .bg-gradient-pulse {
+      background: linear-gradient(120deg, #7f5dff, #ff4b94, #ffcf4b, #7f5dff);
+      background-size: 250% 250%;
+      animation: bg-gradient-move 8s ease-in-out infinite;
+    }
+
+    @keyframes bg-gradient-move {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* 2) Diagonal stripes moving */
+    .bg-diagonal-stripes {
+      background-image: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.12) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.12) 50%,
+        rgba(255, 255, 255, 0.12) 75%,
+        transparent 75%,
+        transparent
+      );
+      background-size: 32px 32px;
+      background-color: #151515;
+      animation: stripes-move 2.3s linear infinite;
+    }
+
+    @keyframes stripes-move {
+      from {
+        background-position: 0 0;
+      }
+      to {
+        background-position: 64px 0;
+      }
+    }
+
+    /* 3) Soft spotlight moving */
+    .bg-spotlight {
+      background-color: #06060a;
+      background-image: radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.16) 0, transparent 45%);
+      animation: spotlight-move 6s ease-in-out infinite;
+    }
+
+    @keyframes spotlight-move {
+      0% {
+        background-position: 0% 0%;
+      }
+      50% {
+        background-position: 100% 100%;
+      }
+      100% {
+        background-position: 0% 0%;
+      }
+    }
+
+    /* 4) Grid pattern pulsing */
+    .bg-grid-pulse {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+      background-size: 22px 22px;
+      background-color: #050507;
+      animation: grid-pulse 3.5s ease-in-out infinite;
+    }
+
+    @keyframes grid-pulse {
+      0% {
+        opacity: 0.4;
+        background-position: 0 0, 0 0;
+      }
+      50% {
+        opacity: 1;
+        background-position: 4px 4px, -4px -4px;
+      }
+      100% {
+        opacity: 0.4;
+        background-position: 0 0, 0 0;
+      }
+    }
+
+    /* 5) Orbit rings using radial gradients */
+    .bg-orbit-rings {
+      background-color: #050509;
+      background-image:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.14) 0, transparent 55%),
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0, transparent 35%);
+      animation: orbits 5s linear infinite;
+    }
+
+    @keyframes orbits {
+      0% {
+        background-size: 140% 140%, 60% 60%;
+        background-position: 50% 50%, 50% 50%;
+      }
+      50% {
+        background-size: 170% 170%, 80% 80%;
+        background-position: 45% 55%, 55% 45%;
+      }
+      100% {
+        background-size: 140% 140%, 60% 60%;
+        background-position: 50% 50%, 50% 50%;
+      }
+    }
+
+    /* 6) Neon border glow using inner shadow + subtle gradient */
+    .bg-neon-border {
+      background: radial-gradient(circle at top, #121212, #050505);
+      box-shadow: 0 0 0 0 rgba(122, 252, 255, 0.7);
+      animation: neon-border 2.4s ease-in-out infinite;
+    }
+
+    @keyframes neon-border {
+      0% {
+        box-shadow: 0 0 0 0 rgba(122, 252, 255, 0.5);
+      }
+      50% {
+        box-shadow:
+          0 0 16px 3px rgba(122, 252, 255, 0.9),
+          0 0 32px 12px rgba(0, 150, 200, 0.7);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(122, 252, 255, 0.5);
+      }
+    }
+
+    /* 7) Gradient orbit stripes (parallax style) */
+    .bg-orbit-stripes {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255, 227, 138, 0.18) 0, transparent 55%),
+        linear-gradient(120deg, #1a1a1a, #050507);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bg-orbit-stripes::before {
+      content: "";
+      position: absolute;
+      inset: -50%;
+      background-image: repeating-linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0.04) 0,
+        rgba(255, 255, 255, 0.04) 12px,
+        transparent 12px,
+        transparent 24px
+      );
+      animation: orbit-stripes-move 4.5s linear infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes orbit-stripes-move {
+      from {
+        transform: translateX(-10%) rotate(10deg);
+      }
+      to {
+        transform: translateX(10%) rotate(10deg);
+      }
+    }
+
+    /* ============================================================
+       SECTION TRANSITIONS DEMO
+       ============================================================ */
+
+    .section-transition-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    @media (min-width: 700px) {
+      .section-transition-wrap {
+        flex-direction: row;
+      }
+    }
+
+    .transition-card {
+      flex: 1;
+      border-radius: 18px;
+      padding: 1.2rem 1.3rem;
+      background: rgba(8, 8, 8, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition:
+        flex 0.35s ease,
+        back-ground 0.35s ease,
+        transform 0.35s ease,
+        box-shadow 0.35s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .transition-card-title {
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      opacity: 0.9;
+    }
+
+    .transition-card-text {
+      font-size: 0.8rem;
+      opacity: 0.75;
+      line-height: 1.5;
+    }
+
+    .transition-card:hover {
+      flex: 1.4;
+      background: radial-gradient(circle at top, #202020, #050505);
+      transform: translateY(-3px);
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .section-tip {
+      font-size: 0.78rem;
+      opacity: 0.7;
+      margin-top: 0.9rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    /* ============================================================
+       HOVER EFFECTS SECTION (generic cards)
+       ============================================================ */
+
+    .hover-card {
+      border-radius: 16px;
+      padding: 1.1rem 1.2rem;
+      background: rgba(12, 12, 12, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease,
+        back-ground 0.28s ease,
+        border-color 0.28s ease,
+        filter 0.28s ease;
+    }
+
+    .hover-title {
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.9;
+    }
+
+    .hover-text {
+      font-size: 0.8rem;
+      opacity: 0.75;
+      line-height: 1.5;
+    }
+
+    /* 1) Lift + shadow */
+    .hover-lift {}
+
+    .hover-lift:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 32px rgba(0, 0, 0, 0.8);
+      border-color: rgba(255, 227, 138, 0.6);
+      background: radial-gradient(circle at top, #202020, #050505);
+    }
+
+    /* 2) Zoom-in */
+    .hover-zoom {
+      transform-origin: center;
+    }
+
+    .hover-zoom:hover {
+      transform: scale(1.04);
+      box-shadow: 0 18px 30px rgba(0, 0, 0, 0.75);
+      background: radial-gradient(circle at center, #1d1d1d, #050505);
+    }
+
+    /* 3) Tilt */
+    .hover-tilt:hover {
+      transform: translateY(-4px) rotate3d(1, -1, 0, 8deg);
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.85);
+    }
+
+    /* 4) Blur background, sharpen text */
+    .hover-blur-bg {
+      backdrop-filter: blur(0px);
+      background: rgba(10, 10, 10, 0.8);
+    }
+
+    .hover-blur-bg:hover {
+      backdrop-filter: blur(6px);
+      background: rgba(10, 10, 10, 0.6);
+      border-color: rgba(122, 252, 255, 0.6);
+    }
+
+    .hover-blur-bg:hover .hover-title,
+    .hover-blur-bg:hover .hover-text {
+      filter: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>CSS Animation Playground</h1>
+  <p class="subtitle">Copy any example: HTML + its CSS class and keyframes.</p>
+
+  <nav class="top-nav">
+    <a href="#buttons">Buttons</a>
+    <a href="#links">Links</a>
+    <a href="#backgrounds">Backgrounds</a>
+    <a href="#section-transitions">Section Transitions</a>
+    <a href="#hover-effects">Hover Effects</a>
+  </nav>
+
+  <!-- ============================ BUTTONS ============================ -->
+  <section id="buttons" class="section-block">
+    <h2 class="section-heading">Buttons</h2>
+    <p class="section-description">
+      Each button uses the base <code>.btn</code> class plus one extra animation class.
+      Copy the button HTML and its specific CSS block.
+    </p>
+
+    <div class="grid">
+      <div class="example">
+        <div class="example-title">Pulse (always active)</div>
+        <button class="btn btn-pulse">Pulse</button>
+        <div class="example-label">Classes: <code>btn btn-pulse</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Glow on Hover</div>
+        <button class="btn btn-glow">Glow</button>
+        <div class="example-label">Classes: <code>btn btn-glow</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Fade on Hover</div>
+        <button class="btn btn-fade">Fade</button>
+        <div class="example-label">Classes: <code>btn btn-fade</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Shine Across</div>
+        <button class="btn btn-shine">Shine</button>
+        <div class="example-label">Classes: <code>btn btn-shine</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Sparks Around Edge</div>
+        <button class="btn btn-sparks">Sparks</button>
+        <div class="example-label">Classes: <code>btn btn-sparks</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">3D Press Down</div>
+        <button class="btn btn-press">Press Me</button>
+        <div class="example-label">Classes: <code>btn btn-press</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Wiggle on Hover</div>
+        <button class="btn btn-wiggle">Wiggle</button>
+        <div class="example-label">Classes: <code>btn btn-wiggle</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Gradient Slide</div>
+        <button class="btn btn-gradient-slide">Slide</button>
+        <div class="example-label">Classes: <code>btn btn-gradient-slide</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Ripple on Hover</div>
+        <button class="btn btn-ripple">Ripple</button>
+        <div class="example-label">Classes: <code>btn btn-ripple</code></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="links" class="section-block">
+  <h2 class="section-heading">Links</h2>
+  <p class="section-description">
+    Colorful, animated <code>&lt;a&gt;</code> tags. Base class is <code>.link-demo</code>,
+    plus one extra class for each effect.
+  </p>
+
+  <div class="grid">
+    <div class="example">
+      <div class="example-title">Rainbow Underline (always moving)</div>
+      <a href="#" class="link-demo link-rainbow-underline">Rainbow Link</a>
+      <div class="example-label">Classes: <code>link-demo link-rainbow-underline</code></div>
+    </div>
+
+    <div class="example">
+      <div class="example-title">Neon Pop</div>
+      <a href="#" class="link-demo link-neon-pop">Neon Pop</a>
+      <div class="example-label">Classes: <code>link-demo link-neon-pop</code></div>
+    </div>
+
+    <div class="example">
+      <div class="example-title">Bubble Highlight</div>
+      <a href="#" class="link-demo link-bubble">Bubble Link</a>
+      <div class="example-label">Classes: <code>link-demo link-bubble</code></div>
+    </div>
+
+    <div class="example">
+      <div class="example-title">Wobble</div>
+      <a href="#" class="link-demo link-wobble">Wobble Link</a>
+      <div class="example-label">Classes: <code>link-demo link-wobble</code></div>
+    </div>
+
+    <div class="example">
+      <div class="example-title">Glitch</div>
+      <a href="#" class="link-demo link-glitch">Glitch Link</a>
+      <div class="example-label">Classes: <code>link-demo link-glitch</code></div>
+    </div>
+
+    <div class="example">
+      <div class="example-title">Comet Underline</div>
+      <a href="#" class="link-demo link-comet">Comet Link</a>
+      <div class="example-label">Classes: <code>link-demo link-comet</code></div>
+    </div>
+
+    <div class="example">
+      <div class="example-title">Firefly Sparkles</div>
+      <a href="#" class="link-demo link-firefly">Firefly Link</a>
+      <div class="example-label">Classes: <code>link-demo link-firefly</code></div>
+    </div>
+
+    <div class="example">
+      <div class="example-title">Rainbow Text</div>
+      <a href="#" class="link-demo link-rainbow-text">Rainbow Text</a>
+      <div class="example-label">Classes: <code>link-demo link-rainbow-text</code></div>
+    </div>
+
+    <div class="example">
+      <div class="example-title">Pill Badge with Shine</div>
+      <a href="#" class="link-demo link-pill-shine">
+        <span>Badge Link</span>
+      </a>
+      <div class="example-label">Classes: <code>link-demo link-pill-shine</code></div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- ============================ BACKGROUNDS (EXPANDED) ============================ -->
+  <section id="backgrounds" class="section-block">
+    <h2 class="section-heading">Background Animations</h2>
+    <p class="section-description">
+      These examples animate the background of a container.
+      Copy the <code>.bg-demo</code> base plus one of the animation classes.
+    </p>
+
+    <div class="grid">
+      <div class="example">
+        <div class="example-title">Moving Gradient</div>
+        <div class="bg-demo bg-gradient-pulse">Gradient Pulse</div>
+        <div class="example-label">Classes: <code>bg-demo bg-gradient-pulse</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Diagonal Stripes</div>
+        <div class="bg-demo bg-diagonal-stripes">Diagonal Stripes</div>
+        <div class="example-label">Classes: <code>bg-demo bg-diagonal-stripes</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Soft Spotlight</div>
+        <div class="bg-demo bg-spotlight">Spotlight</div>
+        <div class="example-label">Classes: <code>bg-demo bg-spotlight</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Grid Pattern Pulse</div>
+        <div class="bg-demo bg-grid-pulse">Grid Pulse</div>
+        <div class="example-label">Classes: <code>bg-demo bg-grid-pulse</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Orbit Rings</div>
+        <div class="bg-demo bg-orbit-rings">Orbit Rings</div>
+        <div class="example-label">Classes: <code>bg-demo bg-orbit-rings</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Neon Border Glow</div>
+        <div class="bg-demo bg-neon-border">Neon Border</div>
+        <div class="example-label">Classes: <code>bg-demo bg-neon-border</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Orbiting Stripes Overlay</div>
+        <div class="bg-demo bg-orbit-stripes">Orbit Stripes</div>
+        <div class="example-label">Classes: <code>bg-demo bg-orbit-stripes</code></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== SECTION TRANSITIONS DEMO ====================== -->
+  <section id="section-transitions" class="section-block">
+    <h2 class="section-heading">Section Transitions</h2>
+    <p class="section-description">
+      This shows how to use <code>transition</code> on whole sections or panels.
+      Hover each panel to see it expand and change style.
+    </p>
+
+    <div class="section-transition-wrap">
+      <div class="transition-card">
+        <div class="transition-card-title">Intro Section</div>
+        <div class="transition-card-text">
+          This could be your hero / landing section. On hover it grows slightly and gets a brighter background.
+        </div>
+      </div>
+
+      <div class="transition-card">
+        <div class="transition-card-title">Content Section</div>
+        <div class="transition-card-text">
+          Use <code>transition</code> on <code>flex</code>, <code>background</code>, and <code>box-shadow</code> to create smooth shifts between sections.
+        </div>
+      </div>
+
+      <div class="transition-card">
+        <div class="transition-card-title">Footer Section</div>
+        <div class="transition-card-text">
+          You can copy these cards and use them as full-width sections with hover or focus states.
+        </div>
+      </div>
+    </div>
+
+    <p class="section-tip">
+      Tip: combine this with in-page links (<code>&lt;a href="#section-id"&gt;</code>) and
+      <code>html { scroll-behavior: smooth; }</code> for smooth scrolling between sections.
+    </p>
+  </section>
+
+  <!-- ============================ HOVER EFFECTS ============================ -->
+  <section id="hover-effects" class="section-block">
+    <h2 class="section-heading">Hover Effects (Cards)</h2>
+    <p class="section-description">
+      These are generic card hover effects.
+      Replace the text with anything: images, icons, or content.
+    </p>
+
+    <div class="grid">
+      <div class="example">
+        <div class="example-title">Lift + Shadow</div>
+        <div class="hover-card hover-lift">
+          <div class="hover-title">Lift on Hover</div>
+          <div class="hover-text">
+            Card rises slightly with stronger shadow. Great for clickable tiles or feature boxes.
+          </div>
+        </div>
+        <div class="example-label">Classes: <code>hover-card hover-lift</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Zoom In</div>
+        <div class="hover-card hover-zoom">
+          <div class="hover-title">Zoom on Hover</div>
+          <div class="hover-text">
+            Light scale-up animation. Easy to combine with images or thumbnails.
+          </div>
+        </div>
+        <div class="example-label">Classes: <code>hover-card hover-zoom</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">3D Tilt</div>
+        <div class="hover-card hover-tilt">
+          <div class="hover-title">Tilt on Hover</div>
+          <div class="hover-text">
+            Subtle 3D tilt effect using <code>rotate3d</code>. Feels interactive without being too much.
+          </div>
+        </div>
+        <div class="example-label">Classes: <code>hover-card hover-tilt</code></div>
+      </div>
+
+      <div class="example">
+        <div class="example-title">Blurred Background</div>
+        <div class="hover-card hover-blur-bg">
+          <div class="hover-title">Blurred Glass</div>
+          <div class="hover-text">
+            Uses <code>backdrop-filter</code> to blur whatever is behind the card (supported in modern browsers).
+          </div>
+        </div>
+        <div class="example-label">Classes: <code>hover-card hover-blur-bg</code></div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

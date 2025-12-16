@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Style Switch Demo (Generic ↔ Exciting)</title>
+
+  <style>
+    /* =========================================================
+       1) Base / Tokens
+    ========================================================== */
+    :root{
+      --bg:#f4f6f8; --panel:#ffffff; --text:#1f2937; --muted:#6b7280;
+      --border:#d1d5db; --shadow:0 8px 24px rgba(0,0,0,0.08);
+      --accent:#2563eb; --accent2:#16a34a; --warn:#b45309;
+      --radius:14px; --gap:14px;
+      --font: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--gap);margin-bottom:18px}
+    .title h1{margin:0;font-size:1.35rem;letter-spacing:.2px}
+    .title p{margin:6px 0 0;color:var(--muted);max-width:65ch}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:var(--gap)}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .section-title{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 10px}
+    .section-title h2{margin:0;font-size:1.05rem}
+    .hint{color:var(--muted);font-size:.92rem}
+
+    /* =========================================================
+       2) Buttons (generic)
+    ========================================================== */
+    .btn-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .btn{
+      appearance:none;border:1px solid var(--border);background:#fff;color:var(--text);
+      padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease, border-color 150ms ease, filter 150ms ease;
+      box-shadow:0 2px 10px rgba(0,0,0,0.06);
+      position:relative;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn:active{transform:translateY(0) scale(.99)}
+    .btn.primary{border-color:rgba(37,99,235,.35);background:rgba(37,99,235,.08)}
+    .btn.success{border-color:rgba(22,163,74,.35);background:rgba(22,163,74,.08)}
+    .btn.warn{border-color:rgba(180,83,9,.35);background:rgba(180,83,9,.08)}
+    .btn.ghost{background:transparent}
+    .btn.pill{border-radius:999px}
+    .btn.icon{padding:10px 12px}
+    .btn small{font-weight:700;opacity:.8}
+
+    /* Candy cane (animated) */
+    .btn.candy{overflow:hidden;border-color:rgba(220,38,38,.35)}
+    .btn.candy::before{
+      content:"";position:absolute;inset:-40% -60%;
+      background:repeating-linear-gradient(45deg,rgba(220,38,38,.30) 0 10px,rgba(255,255,255,.28) 10px 20px);
+      animation:candyMove 1.15s linear infinite; opacity:.92;
+    }
+    .btn.candy > span{position:relative;z-index:1}
+    @keyframes candyMove{from{transform:translate(-10%,-10%)}to{transform:translate(10%,10%)}}
+
+    /* =========================================================
+       3) Links (generic)
+    ========================================================== */
+    .links{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0 0}
+    .link{
+      color:var(--accent);text-decoration:none;font-weight:800;
+      border-bottom:1px dashed rgba(37,99,235,.45); padding-bottom:2px;
+      transition: filter 150ms ease, border-color 150ms ease, transform 150ms ease;
+      position:relative;
+    }
+    .link:hover{border-bottom-style:solid;transform:translateY(-1px)}
+
+    /* =========================================================
+       4) Text examples (generic)
+    ========================================================== */
+    .text-samples{display:grid;gap:10px;margin-top:10px}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;
+      border:1px solid var(--border);background:#fff;width:fit-content;
+      box-shadow:0 1px 6px rgba(0,0,0,.06);font-weight:800
+    }
+    .badge .dot{width:10px;height:10px;border-radius:50%;background:var(--accent2)}
+    .quote{border-left:4px solid rgba(37,99,235,.45);padding:10px 12px;background:rgba(37,99,235,.05);border-radius:10px;margin:0}
+    .code{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size:.95rem;background:#0b1020;color:#e5e7eb;padding:12px;border-radius:12px;overflow:auto;margin:0;
+      border:1px solid rgba(255,255,255,.08)
+    }
+
+    /* =========================================================
+       5) Background squares (generic)
+    ========================================================== */
+    .squares{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}
+    .square{
+      aspect-ratio:1/1;border-radius:16px;border:1px solid var(--border);background:#fff;
+      box-shadow:0 6px 18px rgba(0,0,0,.08);
+      position:relative;overflow:hidden;display:grid;place-items:end start;padding:12px
+    }
+    .square .label{font-weight:900;font-size:.95rem;background:rgba(255,255,255,.85);border:1px solid rgba(0,0,0,.06);padding:6px 10px;border-radius:999px}
+    .bg-grid{
+      background-image:linear-gradient(to right,rgba(0,0,0,.06) 1px,transparent 1px),
+                      linear-gradient(to bottom,rgba(0,0,0,.06) 1px,transparent 1px);
+      background-size:18px 18px;background-color:#fff
+    }
+    .bg-diagonal{
+      background-image:repeating-linear-gradient(45deg,rgba(37,99,235,.12) 0 12px,rgba(255,255,255,.12) 12px 24px);
+      background-color:#fff
+    }
+    .bg-soft-radial{
+      background:radial-gradient(circle at 30% 25%,rgba(22,163,74,.20),transparent 55%),
+                 radial-gradient(circle at 70% 75%,rgba(37,99,235,.18),transparent 60%),#fff
+    }
+    .bg-dots{background:radial-gradient(rgba(0,0,0,.08) 1.2px,transparent 1.3px) 0 0/16px 16px,#fff}
+
+    /* =========================================================
+       6) EXCITING THEME (toggle body.exciting)
+    ========================================================== */
+    body.exciting{
+      --bg:#070A14; --panel:rgba(255,255,255,.06); --text:#EAF0FF; --muted:rgba(234,240,255,.72);
+      --border:rgba(255,255,255,.14); --shadow:0 18px 50px rgba(0,0,0,.55);
+      --accent:#7C3AED; --accent2:#22C55E; --warn:#F59E0B;
+    }
+
+    /* Backdrop glow */
+    body.exciting::before{
+      content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+      background:
+        radial-gradient(1100px 700px at 15% 12%, rgba(124,58,237,.26), transparent 60%),
+        radial-gradient(900px 520px at 80% 72%, rgba(34,197,94,.18), transparent 60%),
+        radial-gradient(800px 500px at 55% 35%, rgba(245,158,11,.14), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,0));
+      filter:saturate(1.25);
+      animation:slowDrift 12s ease-in-out infinite alternate;
+    }
+    @keyframes slowDrift{from{transform:translateY(0)}to{transform:translateY(12px)}}
+    body.exciting .card{backdrop-filter: blur(10px)}
+
+    /* =======================
+       Exciting Buttons
+       - “glow”, “shine”, “electric”, “neon”
+    ======================= */
+    body.exciting .btn{
+      border-color:rgba(255,255,255,.18);
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      box-shadow:
+        0 12px 36px rgba(0,0,0,.55),
+        0 0 0 1px rgba(255,255,255,.06) inset;
+    }
+    body.exciting .btn:hover{
+      filter:brightness(1.10);
+      box-shadow:
+        0 14px 46px rgba(0,0,0,.62),
+        0 0 28px rgba(124,58,237,.20),
+        0 0 0 1px rgba(255,255,255,.08) inset;
+    }
+
+    /* Neon variants */
+    body.exciting .btn.primary{
+      background:linear-gradient(135deg, rgba(124,58,237,.42), rgba(59,130,246,.18));
+      border-color:rgba(124,58,237,.42);
+    }
+    body.exciting .btn.success{
+      background:linear-gradient(135deg, rgba(34,197,94,.34), rgba(16,185,129,.16));
+      border-color:rgba(34,197,94,.38);
+    }
+    body.exciting .btn.warn{
+      background:linear-gradient(135deg, rgba(245,158,11,.32), rgba(234,88,12,.16));
+      border-color:rgba(245,158,11,.35);
+    }
+
+    /* Shine sweep (applies to .shine buttons) */
+    body.exciting .btn.shine{overflow:hidden}
+    body.exciting .btn.shine::after{
+      content:""; position:absolute; inset:-20% -60%;
+      background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,.22) 50%, transparent 60%);
+      transform: translateX(-40%) rotate(0deg);
+      transition: transform 700ms ease, opacity 700ms ease;
+      opacity: 0;
+    }
+    body.exciting .btn.shine:hover::after{ opacity: 1; transform: translateX(45%) rotate(0deg); }
+
+    /* Neon outline pulse (applies to .pulse) */
+    body.exciting .btn.pulse{
+      box-shadow:
+        0 12px 36px rgba(0,0,0,.55),
+        0 0 0 1px rgba(255,255,255,.06) inset,
+        0 0 18px rgba(34,197,94,.18);
+      animation: neonPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes neonPulse{
+      0%,100%{ filter:brightness(1); }
+      50%{ filter:brightness(1.18); }
+    }
+
+    /* ELECTRICAL button (special)
+       - lightning arcs + jitter on hover
+    */
+    body.exciting .btn.electric{
+      border-color:rgba(56,189,248,.45);
+      background: linear-gradient(135deg, rgba(56,189,248,.22), rgba(124,58,237,.18));
+      text-shadow: 0 0 14px rgba(56,189,248,.35);
+    }
+    body.exciting .btn.electric::before{
+      content:""; position:absolute; inset:-30%;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(56,189,248,.35), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(167,139,250,.28), transparent 45%),
+        repeating-linear-gradient( 105deg,
+          rgba(56,189,248,.00) 0 10px,
+          rgba(56,189,248,.22) 10px 12px,
+          rgba(56,189,248,.00) 12px 22px
+        );
+      mix-blend-mode: screen;
+      opacity: 0.0;
+      transform: rotate(-8deg);
+      transition: opacity 160ms ease;
+      pointer-events:none;
+    }
+    body.exciting .btn.electric:hover::before{ opacity: .85; }
+    body.exciting .btn.electric:hover{
+      animation: electricJitter 280ms ease-in-out infinite;
+      box-shadow:
+        0 14px 46px rgba(0,0,0,.62),
+        0 0 34px rgba(56,189,248,.30),
+        0 0 18px rgba(124,58,237,.22),
+        0 0 0 1px rgba(255,255,255,.08) inset;
+    }
+    @keyframes electricJitter{
+      0%{transform:translateY(-1px) translateX(0)}
+      25%{transform:translateY(-1px) translateX(1px)}
+      50%{transform:translateY(-1px) translateX(-1px)}
+      75%{transform:translateY(-1px) translateX(1px)}
+      100%{transform:translateY(-1px) translateX(0)}
+    }
+
+    /* Candy cane becomes glossy + glow in exciting */
+    body.exciting .btn.candy{
+      border-color:rgba(255,255,255,.20);
+      box-shadow:0 14px 46px rgba(0,0,0,.62), 0 0 24px rgba(220,38,38,.12);
+    }
+    body.exciting .btn.candy::after{
+      content:"";position:absolute;inset:0;
+      background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.38), transparent 35%);
+      opacity:.7;pointer-events:none;
+    }
+
+    /* =======================
+       Cooler Links
+       - underline glow, sparkle, and an electrical link
+    ======================= */
+    body.exciting .link{
+      color:#C4B5FD;
+      border-bottom-color:rgba(196,181,253,.55);
+      text-shadow:0 0 18px rgba(124,58,237,.28);
+    }
+    body.exciting .link::after{
+      content:""; position:absolute; left:0; right:0; bottom:-6px; height:10px;
+      background: radial-gradient(closest-side, rgba(124,58,237,.28), transparent 70%);
+      opacity:0; transform:scaleX(.65);
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events:none;
+    }
+    body.exciting .link:hover::after{opacity:1; transform:scaleX(1)}
+    body.exciting .link:hover{filter:brightness(1.12)}
+
+    /* Spark link (tiny “twinkle” on hover) */
+    body.exciting .link.spark::before{
+      content:"✦"; position:absolute; right:-14px; top:-10px;
+      font-size:14px; opacity:0; transform:translateY(4px) rotate(10deg);
+      transition:opacity 180ms ease, transform 180ms ease;
+      text-shadow:0 0 18px rgba(245,158,11,.35);
+    }
+    body.exciting .link.spark:hover::before{opacity:1; transform:translateY(0) rotate(0deg)}
+
+    /* ELECTRICAL link (special) */
+    body.exciting .link.electric-link{
+      color:#7DD3FC;
+      border-bottom-color:rgba(125,211,252,.65);
+      text-shadow:0 0 18px rgba(56,189,248,.30);
+      padding:2px 2px 4px;
+    }
+    body.exciting .link.electric-link::before{
+      content:""; position:absolute; left:-6px; right:-6px; top:-6px; bottom:-6px;
+      border-radius:10px;
+      background:
+        radial-gradient(circle at 15% 40%, rgba(56,189,248,.25), transparent 55%),
+        repeating-linear-gradient( 95deg,
+          rgba(56,189,248,.00) 0 12px,
+          rgba(56,189,248,.22) 12px 14px,
+          rgba(56,189,248,.00) 14px 26px
+        );
+      opacity:0; transition:opacity 160ms ease;
+      pointer-events:none;
+      filter: blur(.2px);
+    }
+    body.exciting .link.electric-link:hover::before{opacity:.9}
+    body.exciting .link.electric-link:hover{
+      animation: electricJitterLink 260ms ease-in-out infinite;
+      transform: translateY(-1px);
+    }
+    @keyframes electricJitterLink{
+      0%{transform:translateY(-1px) translateX(0)}
+      33%{transform:translateY(-1px) translateX(1px)}
+      66%{transform:translateY(-1px) translateX(-1px)}
+      100%{transform:translateY(-1px) translateX(0)}
+    }
+
+    /* =======================
+       Text + squares punchier
+    ======================= */
+    body.exciting .quote{border-left-color:rgba(196,181,253,.65);background:rgba(124,58,237,.12)}
+    body.exciting .badge{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16)}
+    body.exciting .badge .dot{box-shadow:0 0 18px rgba(34,197,94,.45)}
+    body.exciting .square .label{background:rgba(5,8,20,.65);border-color:rgba(255,255,255,.12)}
+
+    body.exciting .bg-grid{
+      background:
+        linear-gradient(to right,rgba(255,255,255,.10) 1px,transparent 1px),
+        linear-gradient(to bottom,rgba(255,255,255,.10) 1px,transparent 1px),
+        radial-gradient(circle at 30% 20%,rgba(124,58,237,.30),transparent 55%),
+        radial-gradient(circle at 75% 80%,rgba(34,197,94,.20),transparent 55%),
+        #060816;
+      background-size:18px 18px,18px 18px,auto,auto,auto;
+    }
+    body.exciting .bg-diagonal{
+      background:
+        repeating-linear-gradient(45deg,rgba(255,255,255,.10) 0 10px,rgba(124,58,237,.18) 10px 20px,rgba(34,197,94,.12) 20px 30px),
+        radial-gradient(circle at 50% 50%,rgba(245,158,11,.12),transparent 60%),
+        #060816;
+      animation:diagSlide 6s linear infinite;
+    }
+    @keyframes diagSlide{from{background-position:0 0,0 0,0 0}to{background-position:120px 120px,0 0,0 0}}
+    body.exciting .bg-soft-radial{
+      background:
+        radial-gradient(circle at 20% 25%,rgba(34,197,94,.26),transparent 55%),
+        radial-gradient(circle at 70% 35%,rgba(124,58,237,.28),transparent 58%),
+        radial-gradient(circle at 50% 80%,rgba(245,158,11,.14),transparent 60%),
+        #060816;
+      animation:pulseGlow 4.8s ease-in-out infinite;
+    }
+    @keyframes pulseGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18)}}
+    body.exciting .bg-dots{
+      background:
+        radial-gradient(rgba(255,255,255,.25) 1.1px,transparent 1.2px) 0 0/16px 16px,
+        radial-gradient(rgba(124,58,237,.18) 1.0px,transparent 1.1px) 8px 8px/20px 20px,
+        radial-gradient(circle at 30% 20%,rgba(34,197,94,.20),transparent 55%),
+        #060816;
+      animation:starDrift 10s linear infinite;
+    }
+    @keyframes starDrift{from{background-position:0 0,0 0,0 0,0 0}to{background-position:120px 0,-60px 80px,0 0,0 0}}
+
+    footer{color:var(--muted);font-size:.92rem;margin-top:10px}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>Reusable Styles Demo</h1>
+        <p>
+          More buttons, cooler links, stronger glow/hover effects, and an <strong>electrical effect</strong>
+          on one link and one button. Toggle to switch between generic and exciting.
+        </p>
+      </div>
+
+      <button id="toggleTheme" class="btn primary shine" type="button">
+        Make it exciting
+      </button>
+    </header>
+
+    <div class="grid">
+      <!-- Left column -->
+      <section class="card">
+        <div class="section-title">
+          <h2>Buttons</h2>
+          <div class="hint">Try hover on “Electric” and “Glow”</div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" type="button">Plain</button>
+          <button class="btn primary shine" type="button">Primary <small>(shine)</small></button>
+          <button class="btn success pulse" type="button">Glow <small>(pulse)</small></button>
+          <button class="btn warn shine" type="button">Warning</button>
+
+          <button class="btn ghost pill" type="button">Ghost Pill</button>
+          <button class="btn icon" type="button" aria-label="Icon button">⚡</button>
+
+          <button class="btn candy" type="button"><span>Candy Cane</span></button>
+          <button class="btn electric shine" type="button">Electric <small>(hover)</small></button>
+        </div>
+
+        <div class="section-title" style="margin-top:16px;">
+          <h2>Links</h2>
+          <div class="hint">Spark + electrical link effects</div>
+        </div>
+
+        <nav class="links" aria-label="Example links">
+          <a class="link" href="#" onclick="return false;">Docs</a>
+          <a class="link spark" href="#" onclick="return false;">Tutorial</a>
+          <a class="link" href="#" onclick="return false;">Components</a>
+          <a class="link electric-link" href="#" onclick="return false;">Electric Link</a>
+          <a class="link spark" href="#" onclick="return false;">GitHub</a>
+        </nav>
+
+        <div class="section-title" style="margin-top:16px;">
+          <h2>Text Examples</h2>
+          <div class="hint">Badge, quote, and code block</div>
+        </div>
+
+        <div class="text-samples">
+          <div class="badge"><span class="dot"></span> Status: Ready for reuse</div>
+
+          <blockquote class="quote">
+            “Hover effects should feel responsive, not chaotic.”
+          </blockquote>
+
+          <pre class="code"><code>// Hover the electric button/link in exciting mode.
+// The effect is just CSS gradients + a tiny jitter animation.</code></pre>
+        </div>
+      </section>
+
+      <!-- Right column -->
+      <section class="card">
+        <div class="section-title">
+          <h2>Background Effect Squares</h2>
+          <div class="hint">Animate more in “exciting” mode</div>
+        </div>
+
+        <div class="squares">
+          <div class="square bg-grid"><div class="label">Grid</div></div>
+          <div class="square bg-diagonal"><div class="label">Diagonal Slide</div></div>
+          <div class="square bg-soft-radial"><div class="label">Pulse Glow</div></div>
+          <div class="square bg-dots"><div class="label">Star Drift</div></div>
+        </div>
+
+        <footer>
+          Tip: The special effects live in <strong>.btn.electric</strong> and <strong>.link.electric-link</strong>.
+        </footer>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // Small JS: toggles a class and updates the toggle button label.
+    const toggleBtn = document.getElementById("toggleTheme");
+
+    toggleBtn.addEventListener("click", () => {
+      const isExciting = document.body.classList.toggle("exciting");
+      toggleBtn.textContent = isExciting ? "Back to generic" : "Make it exciting";
+    });
+  </script>
+</body>
+</html>

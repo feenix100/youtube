@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Button Lab — Generic ↔ Exciting</title>
+
+  <style>
+    /* =========================================================
+       Tokens
+    ========================================================== */
+    :root{
+      --bg:#f4f6f8; --panel:#ffffff; --text:#111827; --muted:#6b7280;
+      --border:#d1d5db; --shadow:0 10px 26px rgba(0,0,0,0.10);
+      --r:16px; --gap:14px;
+      --font: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5}
+    .wrap{max-width:1120px;margin:0 auto;padding:24px}
+    header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--gap);margin-bottom:16px}
+    h1{margin:0;font-size:1.35rem;letter-spacing:.2px}
+    p{margin:6px 0 0;color:var(--muted);max-width:75ch}
+    .card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px;
+      margin-bottom:16px;
+    }
+    .section-title{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 10px}
+    .section-title h2{margin:0;font-size:1.05rem}
+    .hint{color:var(--muted);font-size:.92rem}
+
+    /* =========================================================
+       Theme toggle (generic base)
+    ========================================================== */
+    .toggle{
+      appearance:none;
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--text);
+      padding:10px 14px;
+      border-radius:12px;
+      font-weight:800;
+      cursor:pointer;
+      transition:transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+      box-shadow:0 2px 10px rgba(0,0,0,0.06);
+    }
+    .toggle:hover{transform:translateY(-1px)}
+    .toggle:active{transform:translateY(0) scale(.99)}
+    .toggle:focus-visible{outline:3px solid rgba(37,99,235,.35); outline-offset:2px}
+
+    /* =========================================================
+       Button Lab Layout
+    ========================================================== */
+    .btn-row{
+      display:flex;flex-wrap:wrap;gap:12px;align-items:center
+    }
+    .note{
+      margin-top:12px;
+      font-family:var(--mono);
+      font-size:.92rem;
+      background:rgba(0,0,0,0.04);
+      border:1px dashed rgba(0,0,0,0.12);
+      padding:10px 12px;
+      border-radius:12px;
+      overflow:auto;
+    }
+
+    /* =========================================================
+       Button Base (works in both themes)
+       - Uses CSS variables set by JS for pointer-follow glow
+    ========================================================== */
+    .b{
+      --x: 50%; /* pointer x */
+      --y: 50%; /* pointer y */
+      --lift: -2px;
+      --padY: 12px;
+      --padX: 16px;
+
+      appearance:none;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding: var(--padY) var(--padX);
+      font-weight:900;
+      letter-spacing:.2px;
+      cursor:pointer;
+      background:#fff;
+      color:var(--text);
+      position:relative;
+      overflow:hidden;
+      transform: translateZ(0);
+      transition:
+        transform 160ms ease,
+        box-shadow 160ms ease,
+        border-color 160ms ease,
+        filter 160ms ease;
+      box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    }
+    .b:hover{transform:translateY(var(--lift))}
+    .b:active{transform:translateY(0px) scale(.99)}
+    .b:focus-visible{outline:3px solid rgba(37,99,235,.35); outline-offset:3px}
+
+    /* Spotlight layer (pointer-follow). Subtle in generic, dramatic in exciting. */
+    .b::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background: radial-gradient(120px 90px at var(--x) var(--y),
+        rgba(37,99,235,0.18), transparent 60%);
+      opacity:.35;
+      transition: opacity 160ms ease;
+      pointer-events:none;
+    }
+    .b:hover::before{opacity:.6}
+
+    /* Content wrapper for magnetic “pull” */
+    .b > .label{
+      position:relative;
+      z-index:2;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      transform: translate(var(--tx, 0px), var(--ty, 0px));
+      transition: transform 120ms ease;
+      will-change: transform;
+    }
+    .chip{
+      font-size:.78rem;
+      font-weight:900;
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,0.10);
+      background:rgba(0,0,0,0.04);
+    }
+
+    /* =========================================================
+       EXCITING THEME (body.exciting)
+    ========================================================== */
+    body.exciting{
+      --bg:#070A14;
+      --panel:rgba(255,255,255,0.06);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,0.72);
+      --border:rgba(255,255,255,0.16);
+      --shadow:0 22px 60px rgba(0,0,0,0.55);
+    }
+    body.exciting::before{
+      content:"";
+      position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:
+        radial-gradient(1100px 700px at 15% 15%, rgba(124,58,237,0.26), transparent 60%),
+        radial-gradient(900px 540px at 80% 70%, rgba(56,189,248,0.16), transparent 60%),
+        radial-gradient(800px 520px at 55% 35%, rgba(34,197,94,0.14), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.0));
+      filter:saturate(1.25);
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    @keyframes drift{from{transform:translateY(0)}to{transform:translateY(12px)}}
+    body.exciting .card{backdrop-filter: blur(10px)}
+
+    body.exciting .toggle{
+      background:rgba(255,255,255,0.07);
+      border-color:rgba(255,255,255,0.18);
+      box-shadow:0 14px 44px rgba(0,0,0,0.55);
+    }
+
+    body.exciting .b{
+      border-color:rgba(255,255,255,0.18);
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+      box-shadow:
+        0 14px 44px rgba(0,0,0,0.60),
+        0 0 0 1px rgba(255,255,255,0.06) inset;
+    }
+    body.exciting .b::before{
+      background: radial-gradient(160px 120px at var(--x) var(--y),
+        rgba(56,189,248,0.25), transparent 60%);
+      opacity:.55;
+    }
+    body.exciting .b:hover{
+      filter:brightness(1.12);
+      box-shadow:
+        0 18px 54px rgba(0,0,0,0.68),
+        0 0 26px rgba(124,58,237,0.18),
+        0 0 18px rgba(56,189,248,0.12),
+        0 0 0 1px rgba(255,255,255,0.08) inset;
+    }
+    body.exciting .chip{
+      border-color:rgba(255,255,255,0.16);
+      background:rgba(255,255,255,0.06);
+      color:rgba(234,240,255,0.92);
+    }
+
+    /* =========================================================
+       UNIQUE / STYLIZED BUTTON VARIANTS
+    ========================================================== */
+
+    /* 1) AURORA: animated gradient fill + gentle glow */
+    .b.aurora{
+      border-color: rgba(124,58,237,0.35);
+      background:
+        radial-gradient(120px 80px at 20% 30%, rgba(34,197,94,0.22), transparent 60%),
+        radial-gradient(140px 90px at 80% 70%, rgba(56,189,248,0.20), transparent 62%),
+        linear-gradient(135deg, rgba(124,58,237,0.38), rgba(59,130,246,0.12));
+    }
+    .b.aurora::after{
+      content:"";
+      position:absolute; inset:-40%;
+      background:
+        conic-gradient(from 180deg,
+          rgba(34,197,94,0.0),
+          rgba(34,197,94,0.22),
+          rgba(56,189,248,0.18),
+          rgba(124,58,237,0.22),
+          rgba(34,197,94,0.0));
+      opacity:.55;
+      filter: blur(18px);
+      animation: auroraSpin 6.5s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes auroraSpin{to{transform:rotate(360deg)}}
+
+    /* 2) HOLO: prism sheen that sweeps on hover */
+    .b.holo{
+      border-color: rgba(255,255,255,0.20);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+    }
+    .b.holo::after{
+      content:"";
+      position:absolute; inset:-30%;
+      background:
+        linear-gradient(120deg,
+          transparent 40%,
+          rgba(255,255,255,0.22) 48%,
+          rgba(56,189,248,0.16) 52%,
+          rgba(124,58,237,0.14) 56%,
+          transparent 65%);
+      transform: translateX(-55%);
+      opacity:0;
+      transition: opacity 220ms ease, transform 700ms ease;
+      pointer-events:none;
+      mix-blend-mode: screen;
+    }
+    .b.holo:hover::after{opacity:1; transform: translateX(45%)}
+
+    /* 3) PLASMA RING: animated border ring + inner fill */
+    .b.plasma{
+      border: none;
+      background: rgba(255,255,255,0.06);
+      box-shadow:
+        0 14px 44px rgba(0,0,0,0.60),
+        0 0 0 1px rgba(255,255,255,0.08) inset;
+    }
+    .b.plasma::before{
+      /* override spotlight: use it as inner glow */
+      background: radial-gradient(160px 120px at var(--x) var(--y),
+        rgba(245,158,11,0.22), transparent 65%);
+      opacity:.65;
+    }
+    .b.plasma::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: conic-gradient(from 0deg,
+        rgba(56,189,248,0.0),
+        rgba(56,189,248,0.55),
+        rgba(124,58,237,0.55),
+        rgba(34,197,94,0.55),
+        rgba(245,158,11,0.55),
+        rgba(56,189,248,0.0));
+      animation: plasmaSpin 2.8s linear infinite;
+      /* ring mask */
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      padding:2px;
+      border-radius:16px;
+      opacity:.85;
+      pointer-events:none;
+      filter: blur(0.2px);
+    }
+    @keyframes plasmaSpin{to{transform:rotate(360deg)}}
+
+    /* 4) CIRCUIT: sweeping “trace” lines + subtle scan */
+    .b.circuit{
+      border-color: rgba(56,189,248,0.32);
+      background:
+        linear-gradient(135deg, rgba(56,189,248,0.18), rgba(124,58,237,0.12)),
+        radial-gradient(140px 90px at 20% 30%, rgba(56,189,248,0.16), transparent 60%);
+    }
+    .b.circuit::after{
+      content:"";
+      position:absolute; inset:-30%;
+      background:
+        repeating-linear-gradient(90deg,
+          rgba(56,189,248,0.00) 0 14px,
+          rgba(56,189,248,0.22) 14px 16px,
+          rgba(56,189,248,0.00) 16px 28px),
+        linear-gradient(180deg, transparent, rgba(255,255,255,0.10), transparent);
+      opacity:0;
+      transform: translateX(-20%);
+      transition: opacity 180ms ease;
+      pointer-events:none;
+      mix-blend-mode: screen;
+    }
+    .b.circuit:hover::after{
+      opacity:.9;
+      animation: traceSweep 600ms ease-out;
+    }
+    @keyframes traceSweep{
+      from{transform:translateX(-35%)}
+      to{transform:translateX(35%)}
+    }
+
+    /* 5) GLITCH: quick glitch flicker on hover (no heavy JS) */
+    .b.glitch{
+      border-color: rgba(255,255,255,0.18);
+      background: linear-gradient(135deg, rgba(124,58,237,0.30), rgba(56,189,248,0.12));
+      text-shadow: 0 0 16px rgba(124,58,237,0.18);
+    }
+    .b.glitch:hover{
+      animation: glitchPulse 420ms steps(2,end);
+    }
+    @keyframes glitchPulse{
+      0%{filter:brightness(1.05)}
+      25%{filter:brightness(1.20) contrast(1.05)}
+      50%{filter:brightness(0.95) contrast(1.15)}
+      75%{filter:brightness(1.25) contrast(1.05)}
+      100%{filter:brightness(1.10)}
+    }
+
+    /* 6) CANDY CANE: kept, but upgraded in exciting mode */
+    .b.candy{
+      border-color: rgba(220,38,38,0.35);
+      background: #fff;
+    }
+    .b.candy::after{
+      content:"";
+      position:absolute; inset:-40% -60%;
+      background: repeating-linear-gradient(45deg,
+        rgba(220,38,38,0.30) 0 10px,
+        rgba(255,255,255,0.28) 10px 20px);
+      animation: candyMove 1.15s linear infinite;
+      opacity:.9;
+      pointer-events:none;
+    }
+    body.exciting .b.candy{
+      background: rgba(255,255,255,0.06);
+      box-shadow:
+        0 18px 54px rgba(0,0,0,0.68),
+        0 0 22px rgba(220,38,38,0.12),
+        0 0 0 1px rgba(255,255,255,0.08) inset;
+    }
+
+    /* =========================================================
+       Motion safety
+    ========================================================== */
+    @media (prefers-reduced-motion: reduce){
+      *{animation:none !important; transition:none !important}
+      body.exciting::before{animation:none !important}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Button Lab</h1>
+        <p>
+          These buttons are designed as reusable “recipes.” In exciting mode they gain stronger glow, depth,
+          and a cursor-tracking spotlight. Two effects are driven by tiny JS: pointer-follow glow + magnetic hover.
+        </p>
+      </div>
+
+      <button id="toggleTheme" class="toggle" type="button">Make it exciting</button>
+    </header>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Stylized Buttons</h2>
+        <div class="hint">Hover each. Move your cursor across the button surface.</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="b aurora magnetic" type="button">
+          <span class="label">Aurora <span class="chip">animated</span></span>
+        </button>
+
+        <button class="b plasma magnetic" type="button">
+          <span class="label">Plasma Ring <span class="chip">border</span></span>
+        </button>
+
+        <button class="b holo magnetic" type="button">
+          <span class="label">Holographic <span class="chip">sheen</span></span>
+        </button>
+
+        <button class="b circuit magnetic" type="button">
+          <span class="label">Circuit Trace <span class="chip">sweep</span></span>
+        </button>
+
+        <button class="b glitch magnetic" type="button">
+          <span class="label">Glitch Pulse <span class="chip">hover</span></span>
+        </button>
+
+        <button class="b candy magnetic" type="button">
+          <span class="label">Candy Cane <span class="chip">classic</span></span>
+        </button>
+      </div>
+
+      <div class="note">
+        Tip: Reuse any button by copying its class + the CSS block:
+        .b (base) + one variant (aurora / plasma / holo / circuit / glitch / candy).
+        For cursor-follow glow + magnetic hover, keep the JS below.
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>Quick Starter Snippet</h2>
+        <div class="hint">Copy this button anywhere</div>
+      </div>
+      <pre class="note"><code>&lt;button class="b plasma magnetic" type="button"&gt;
+  &lt;span class="label"&gt;Plasma Ring&lt;/span&gt;
+&lt;/button&gt;</code></pre>
+    </section>
+  </div>
+
+  <script>
+    // Theme toggle
+    const toggleBtn = document.getElementById("toggleTheme");
+    toggleBtn.addEventListener("click", () => {
+      const isExciting = document.body.classList.toggle("exciting");
+      toggleBtn.textContent = isExciting ? "Back to generic" : "Make it exciting";
+    });
+
+    // Pointer-follow glow + magnetic hover
+    // - Sets CSS variables --x/--y to move the spotlight
+    // - Applies a subtle "pull" transform to .label inside .magnetic buttons
+    const magnets = document.querySelectorAll(".b.magnetic");
+
+    magnets.forEach((btn) => {
+      const label = btn.querySelector(".label");
+
+      btn.addEventListener("mousemove", (e) => {
+        const r = btn.getBoundingClientRect();
+        const px = ((e.clientX - r.left) / r.width) * 100;
+        const py = ((e.clientY - r.top) / r.height) * 100;
+        btn.style.setProperty("--x", px.toFixed(2) + "%");
+        btn.style.setProperty("--y", py.toFixed(2) + "%");
+
+        // Magnetic pull (small, readable)
+        if (label) {
+          const dx = (e.clientX - (r.left + r.width / 2)) / r.width;
+          const dy = (e.clientY - (r.top + r.height / 2)) / r.height;
+          label.style.setProperty("--tx", (dx * 10).toFixed(2) + "px");
+          label.style.setProperty("--ty", (dy * 10).toFixed(2) + "px");
+        }
+      });
+
+      btn.addEventListener("mouseleave", () => {
+        btn.style.setProperty("--x", "50%");
+        btn.style.setProperty("--y", "50%");
+        if (label) {
+          label.style.setProperty("--tx", "0px");
+          label.style.setProperty("--ty", "0px");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

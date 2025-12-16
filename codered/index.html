@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Style Switch Demo (Generic ↔ Exciting)</title>
+
+  <style>
+    /* =========================================================
+       1) Base / Reset (keep it simple)
+    ========================================================== */
+    :root {
+      --bg: #f4f6f8;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d1d5db;
+      --shadow: 0 8px 24px rgba(0,0,0,0.08);
+
+      --accent: #2563eb;      /* generic blue */
+      --accent2: #16a34a;     /* generic green */
+      --warning: #b45309;     /* generic amber */
+      --radius: 14px;
+      --gap: 14px;
+      --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--gap);
+      margin-bottom: 18px;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 1.35rem;
+      letter-spacing: 0.2px;
+    }
+    .title p {
+      margin: 6px 0 0 0;
+      color: var(--muted);
+      max-width: 60ch;
+      font-size: 0.98rem;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: var(--gap);
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0 0 10px 0;
+    }
+    .section-title h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+    .hint {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    /* =========================================================
+       2) Buttons (generic)
+    ========================================================== */
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease, border-color 150ms ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0px) scale(0.99); }
+
+    .btn.primary {
+      border-color: rgba(37, 99, 235, 0.35);
+      background: rgba(37, 99, 235, 0.08);
+    }
+    .btn.success {
+      border-color: rgba(22, 163, 74, 0.35);
+      background: rgba(22, 163, 74, 0.08);
+    }
+    .btn.warn {
+      border-color: rgba(180, 83, 9, 0.35);
+      background: rgba(180, 83, 9, 0.08);
+    }
+
+    /* Candy Cane button (works in both themes; gets cooler in exciting) */
+    .btn.candy {
+      position: relative;
+      overflow: hidden;
+      border-color: rgba(220, 38, 38, 0.35);
+      background: #fff;
+    }
+    .btn.candy::before {
+      content: "";
+      position: absolute;
+      inset: -40% -60%;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(220, 38, 38, 0.28) 0 10px,
+        rgba(255, 255, 255, 0.28) 10px 20px
+      );
+      transform: rotate(0deg);
+      animation: candyMove 1.2s linear infinite;
+      opacity: 0.9;
+    }
+    .btn.candy > span {
+      position: relative; /* stays above the animated stripes */
+      z-index: 1;
+    }
+    @keyframes candyMove {
+      from { transform: translateX(-10%) translateY(-10%); }
+      to   { transform: translateX(10%) translateY(10%); }
+    }
+
+    /* =========================================================
+       3) Links (generic)
+    ========================================================== */
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 10px 0 0 0;
+    }
+    .link {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(37,99,235,0.45);
+      padding-bottom: 2px;
+      font-weight: 600;
+    }
+    .link:hover {
+      border-bottom-style: solid;
+    }
+
+    /* =========================================================
+       4) Text examples (generic)
+    ========================================================== */
+    .text-samples {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      width: fit-content;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+      font-weight: 700;
+    }
+    .badge .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent2);
+    }
+
+    .quote {
+      border-left: 4px solid rgba(37,99,235,0.45);
+      padding: 10px 12px;
+      background: rgba(37,99,235,0.05);
+      border-radius: 10px;
+      margin: 0;
+    }
+
+    .code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.95rem;
+      background: #0b1020;
+      color: #e5e7eb;
+      padding: 12px;
+      border-radius: 12px;
+      overflow: auto;
+      margin: 0;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* =========================================================
+       5) Background effect squares (generic)
+    ========================================================== */
+    .squares {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .square {
+      aspect-ratio: 1 / 1;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      place-items: end start;
+      padding: 12px;
+    }
+
+    .square .label {
+      font-weight: 800;
+      font-size: 0.95rem;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(0,0,0,0.06);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    /* Generic square backgrounds */
+    .bg-grid {
+      background-image:
+        linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px);
+      background-size: 18px 18px;
+      background-color: #fff;
+    }
+
+    .bg-diagonal {
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(37,99,235,0.12) 0 12px,
+        rgba(255,255,255,0.12) 12px 24px
+      );
+      background-color: #fff;
+    }
+
+    .bg-soft-radial {
+      background: radial-gradient(circle at 30% 25%, rgba(22,163,74,0.20), transparent 55%),
+                  radial-gradient(circle at 70% 75%, rgba(37,99,235,0.18), transparent 60%),
+                  #fff;
+    }
+
+    .bg-dots {
+      background:
+        radial-gradient(rgba(0,0,0,0.08) 1.2px, transparent 1.3px) 0 0 / 16px 16px,
+        #fff;
+    }
+
+    /* =========================================================
+       6) Exciting theme (toggled by .exciting on <body>)
+    ========================================================== */
+    body.exciting {
+      --bg: #070A14;
+      --panel: rgba(255,255,255,0.06);
+      --text: #EAF0FF;
+      --muted: rgba(234,240,255,0.72);
+      --border: rgba(255,255,255,0.14);
+      --shadow: 0 18px 50px rgba(0,0,0,0.55);
+
+      --accent: #7C3AED;   /* violet */
+      --accent2: #22C55E;  /* neon green */
+      --warning: #F59E0B;  /* warm amber */
+    }
+
+    body.exciting::before {
+      /* subtle animated “spacey” backdrop (no canvas needed) */
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(1000px 600px at 20% 15%, rgba(124,58,237,0.22), transparent 60%),
+        radial-gradient(900px 520px at 80% 70%, rgba(34,197,94,0.16), transparent 60%),
+        radial-gradient(700px 460px at 60% 30%, rgba(245,158,11,0.14), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.0));
+      pointer-events: none;
+      z-index: -1;
+      filter: saturate(1.2);
+      animation: slowDrift 12s ease-in-out infinite alternate;
+    }
+    @keyframes slowDrift {
+      from { transform: translateY(0px); }
+      to   { transform: translateY(12px); }
+    }
+
+    body.exciting .card {
+      backdrop-filter: blur(10px);
+    }
+
+    /* Buttons become “exciting” */
+    body.exciting .btn {
+      border-color: rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.07);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    }
+    body.exciting .btn.primary {
+      background: linear-gradient(135deg, rgba(124,58,237,0.35), rgba(37,99,235,0.18));
+      border-color: rgba(124,58,237,0.35);
+    }
+    body.exciting .btn.success {
+      background: linear-gradient(135deg, rgba(34,197,94,0.30), rgba(16,185,129,0.16));
+      border-color: rgba(34,197,94,0.35);
+    }
+    body.exciting .btn.warn {
+      background: linear-gradient(135deg, rgba(245,158,11,0.30), rgba(234,88,12,0.16));
+      border-color: rgba(245,158,11,0.35);
+    }
+
+    /* Candy cane becomes glossy + glow */
+    body.exciting .btn.candy {
+      border-color: rgba(255,255,255,0.20);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+    }
+    body.exciting .btn.candy::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.35), transparent 35%);
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    /* Links become underline + glow */
+    body.exciting .link {
+      color: #C4B5FD;
+      border-bottom-color: rgba(196,181,253,0.55);
+      text-shadow: 0 0 18px rgba(124,58,237,0.25);
+    }
+
+    /* Text examples become punchier */
+    body.exciting .quote {
+      border-left-color: rgba(196,181,253,0.65);
+      background: rgba(124,58,237,0.12);
+    }
+    body.exciting .badge {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.16);
+    }
+    body.exciting .badge .dot {
+      box-shadow: 0 0 18px rgba(34,197,94,0.45);
+    }
+
+    /* Squares become vivid “effects” */
+    body.exciting .square .label {
+      background: rgba(5,8,20,0.65);
+      border-color: rgba(255,255,255,0.12);
+    }
+
+    body.exciting .bg-grid {
+      background:
+        linear-gradient(to right, rgba(255,255,255,0.10) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.10) 1px, transparent 1px),
+        radial-gradient(circle at 30% 20%, rgba(124,58,237,0.30), transparent 55%),
+        radial-gradient(circle at 75% 80%, rgba(34,197,94,0.20), transparent 55%),
+        #060816;
+      background-size: 18px 18px, 18px 18px, auto, auto, auto;
+    }
+
+    body.exciting .bg-diagonal {
+      background:
+        repeating-linear-gradient(
+          45deg,
+          rgba(255,255,255,0.10) 0 10px,
+          rgba(124,58,237,0.18) 10px 20px,
+          rgba(34,197,94,0.12) 20px 30px
+        ),
+        radial-gradient(circle at 50% 50%, rgba(245,158,11,0.12), transparent 60%),
+        #060816;
+      animation: diagSlide 6s linear infinite;
+    }
+    @keyframes diagSlide {
+      from { background-position: 0 0, 0 0, 0 0; }
+      to   { background-position: 120px 120px, 0 0, 0 0; }
+    }
+
+    body.exciting .bg-soft-radial {
+      background:
+        radial-gradient(circle at 20% 25%, rgba(34,197,94,0.26), transparent 55%),
+        radial-gradient(circle at 70% 35%, rgba(124,58,237,0.28), transparent 58%),
+        radial-gradient(circle at 50% 80%, rgba(245,158,11,0.14), transparent 60%),
+        #060816;
+      animation: pulseGlow 4.8s ease-in-out infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.18); }
+    }
+
+    body.exciting .bg-dots {
+      background:
+        radial-gradient(rgba(255,255,255,0.25) 1.1px, transparent 1.2px) 0 0 / 16px 16px,
+        radial-gradient(rgba(124,58,237,0.18) 1.0px, transparent 1.1px) 8px 8px / 20px 20px,
+        radial-gradient(circle at 30% 20%, rgba(34,197,94,0.20), transparent 55%),
+        #060816;
+      animation: starDrift 10s linear infinite;
+    }
+    @keyframes starDrift {
+      from { background-position: 0 0, 0 0, 0 0, 0 0; }
+      to   { background-position: 120px 0, -60px 80px, 0 0, 0 0; }
+    }
+
+    /* Small footer */
+    footer {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>Reusable Styles Demo</h1>
+        <p>
+          This page includes buttons, links, text samples, and “background effect” squares.
+          Use the toggle to switch between <strong>generic</strong> and <strong>exciting</strong> styling.
+        </p>
+      </div>
+
+      <button id="toggleTheme" class="btn primary" type="button">
+        Make it exciting
+      </button>
+    </header>
+
+    <div class="grid">
+      <!-- Left column -->
+      <section class="card">
+        <div class="section-title">
+          <h2>Buttons</h2>
+          <div class="hint">Includes a candy-cane animated button</div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" type="button">Plain Button</button>
+          <button class="btn primary" type="button">Primary</button>
+          <button class="btn success" type="button">Success</button>
+          <button class="btn warn" type="button">Warning</button>
+          <button class="btn candy" type="button"><span>Candy Cane</span></button>
+        </div>
+
+        <div class="section-title" style="margin-top:16px;">
+          <h2>Links</h2>
+          <div class="hint">Hover to see underline changes</div>
+        </div>
+
+        <nav class="links" aria-label="Example links">
+          <a class="link" href="#" onclick="return false;">Docs</a>
+          <a class="link" href="#" onclick="return false;">Tutorial</a>
+          <a class="link" href="#" onclick="return false;">Components</a>
+          <a class="link" href="#" onclick="return false;">GitHub</a>
+        </nav>
+
+        <div class="section-title" style="margin-top:16px;">
+          <h2>Text Examples</h2>
+          <div class="hint">Badge, quote, and code block</div>
+        </div>
+
+        <div class="text-samples">
+          <div class="badge"><span class="dot"></span> Status: Ready for reuse</div>
+
+          <blockquote class="quote">
+            “Good UI isn’t loud. It’s clear. Then it gets a little fun.”
+          </blockquote>
+
+          <pre class="code"><code>// Example snippet
+function greet(name) {
+  return `Hello, ${name}!`;
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- Right column -->
+      <section class="card">
+        <div class="section-title">
+          <h2>Background Effect Squares</h2>
+          <div class="hint">These change a lot in “exciting” mode</div>
+        </div>
+
+        <div class="squares">
+          <div class="square bg-grid">
+            <div class="label">Grid</div>
+          </div>
+          <div class="square bg-diagonal">
+            <div class="label">Diagonal</div>
+          </div>
+          <div class="square bg-soft-radial">
+            <div class="label">Radial Glow</div>
+          </div>
+          <div class="square bg-dots">
+            <div class="label">Dots / Stars</div>
+          </div>
+        </div>
+
+        <footer>
+          Tip: Search for <strong>body.exciting</strong> in the CSS to see exactly what changes when toggled.
+        </footer>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // Keep JS tiny: just toggles a class and updates the button label.
+    const toggleBtn = document.getElementById("toggleTheme");
+
+    toggleBtn.addEventListener("click", () => {
+      const isExciting = document.body.classList.toggle("exciting");
+      toggleBtn.textContent = isExciting ? "Back to generic" : "Make it exciting";
+    });
+  </script>
+</body>
+</html>

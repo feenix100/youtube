@@ -1,0 +1,250 @@
+{
+  "requested": {
+    "stateid": "AZ",
+    "sectorid": "RES",
+    "frequency": "monthly",
+    "start": "2021-01",
+    "end": "2022-01"
+  },
+  "retail_sales": {
+    "route": "electricity/retail-sales",
+    "units": {
+      "sales": "million kilowatt hours",
+      "revenue": "million dollars",
+      "price": "cents per kilowatt-hour"
+    },
+    "rows": [
+      {
+        "period": "2021-01",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "2591.04863",
+        "revenue": "302.86384",
+        "price": "11.69",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      },
+      {
+        "period": "2021-02",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "2015.27102",
+        "revenue": "243.4781",
+        "price": "12.08",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      },
+      {
+        "period": "2021-03",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "2150.05255",
+        "revenue": "261.24807",
+        "price": "12.15",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      },
+      {
+        "period": "2021-04",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "2399.8726",
+        "revenue": "300.46777",
+        "price": "12.52",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      },
+      {
+        "period": "2021-05",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "3115.25334",
+        "revenue": "406.27593",
+        "price": "13.04",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      },
+      {
+        "period": "2021-06",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "4572.96877",
+        "revenue": "578.85788",
+        "price": "12.66",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      },
+      {
+        "period": "2021-07",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "4829.93474",
+        "revenue": "610.4996",
+        "price": "12.64",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      },
+      {
+        "period": "2021-08",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "4656.9282",
+        "revenue": "585.86205",
+        "price": "12.58",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      },
+      {
+        "period": "2021-09",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "3928.23684",
+        "revenue": "500.57914",
+        "price": "12.74",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      },
+      {
+        "period": "2021-10",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "2476.57369",
+        "revenue": "317.54437",
+        "price": "12.82",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      },
+      {
+        "period": "2021-11",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "2032.86089",
+        "revenue": "250.30814",
+        "price": "12.31",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      },
+      {
+        "period": "2021-12",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "2361.33773",
+        "revenue": "297.91772",
+        "price": "12.62",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      },
+      {
+        "period": "2022-01",
+        "stateid": "AZ",
+        "stateDescription": "Arizona",
+        "sectorid": "RES",
+        "sectorName": "residential",
+        "sales": "2524.2248",
+        "revenue": "312.68697",
+        "price": "12.39",
+        "sales-units": "million kilowatt hours",
+        "revenue-units": "million dollars",
+        "price-units": "cents per kilowatt-hour"
+      }
+    ]
+  },
+  "generation": {
+    "route": "electricity/electric-power-operational-data",
+    "generation_column": "generation",
+    "units": {
+      "generation": ""
+    },
+    "rows": [
+      {
+        "period": "2021-01",
+        "generation": "8670.50533"
+      },
+      {
+        "period": "2021-02",
+        "generation": "6926.2734"
+      },
+      {
+        "period": "2021-03",
+        "generation": "8021.48879"
+      },
+      {
+        "period": "2021-04",
+        "generation": "8101.33343"
+      },
+      {
+        "period": "2021-05",
+        "generation": "8893.19753"
+      },
+      {
+        "period": "2021-06",
+        "generation": "10656.13587"
+      },
+      {
+        "period": "2021-07",
+        "generation": "11670.54447"
+      },
+      {
+        "period": "2021-08",
+        "generation": "11499.48572"
+      },
+      {
+        "period": "2021-09",
+        "generation": "10123.11393"
+      },
+      {
+        "period": "2021-10",
+        "generation": "8531.4396"
+      },
+      {
+        "period": "2021-11",
+        "generation": "7402.38426"
+      },
+      {
+        "period": "2021-12",
+        "generation": "8108.71755"
+      },
+      {
+        "period": "2022-01",
+        "generation": "7714.33045"
+      }
+    ]
+  },
+  "built_at": "2025-12-25T00:03:26Z"
+}
